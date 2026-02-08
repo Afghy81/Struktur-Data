@@ -1,0 +1,128 @@
+TUGAS INI DIBANTU DENGAN CHATGPT
+
+1. PROMPT PROGRAM JAVA
+
+Buatlah sebuah program dengan menggunakan bahasa Java, yang mengimplementasikan struktur data array statis (fixed-size array) untuk menyimpan data mahasiswa berupa:
+
+NIM (string / integer)
+Nama (string)
+
+Ketentuan Struktur Data :
+1. Gunakan array statis dengan kapasitas awal 10 data.
+2. Gunakan variabel count untuk menyimpan jumlah data yang sedang terisi.
+
+Dilarang menggunakan library struktur data dinamis seperti:
+
+1. Java: ArrayList, Vector, List, dll.
+
+Semua operasi harus dilakukan secara manual menggunakan pergeseran indeks array.
+
+Fitur Menu yang Wajib Diimplementasikan
+Program harus menampilkan menu interaktif sebagai berikut:
+
+1. Insert at Beginning
+Menambahkan data baru di indeks 0, dan menggeser semua data ke kanan.
+2. Insert at Given Position
+Menambahkan data baru di indeks tertentu sesuai input user.
+3. Insert at End
+Menambahkan data baru di posisi terakhir (count).
+4. Delete from Beginning
+Menghapus data pada indeks 0, dan menggeser semua data ke kiri.
+5. Delete at Given Position
+Menghapus data pada indeks tertentu.
+6. Delete from End
+Menghapus data terakhir.
+7. Delete First Occurrence
+Menghapus data mahasiswa pertama yang cocok berdasarkan NIM.
+8. Show Data
+Menampilkan seluruh data mahasiswa yang tersimpan.
+9. Exit
+Menghentikan program.
+
+Aturan Logika Wajib
+
+1. Setiap insert berhasil:
+count = count + 1
+
+2. Setiap delete berhasil:
+count = count - 1
+
+
+Program harus menangani kondisi:
+
+1. Array penuh (overflow)
+2. Array kosong (underflow)
+3. Posisi indeks tidak valid
+4. Program tidak boleh crash, harus menampilkan pesan error yang logis.
+5. Output yang Diharapkan
+6. Program berjalan dalam loop menu, contoh:
+
+=== MENU DATA MAHASISWA ===
+1. Insert at Beginning
+2. Insert at Given Position
+...
+Pilih menu:
+
+
+2. PROGRAM PYTHON
+
+Buatlah sebuah program dengan menggunakan bahasa Python, yang mengimplementasikan struktur data array statis (fixed-size array) untuk menyimpan data mahasiswa berupa:
+
+NIM (string / integer)
+Nama (string)
+
+Ketentuan Struktur Data :
+1. Gunakan array statis dengan kapasitas awal 10 data.
+2. Gunakan variabel count untuk menyimpan jumlah data yang sedang terisi.
+
+Dilarang menggunakan library struktur data dinamis seperti:
+
+1. Python: list.append(), insert(), pop(), remove(), dll.
+
+Semua operasi harus dilakukan secara manual menggunakan pergeseran indeks array.
+
+Fitur Menu yang Wajib Diimplementasikan
+Program harus menampilkan menu interaktif sebagai berikut:
+
+1. Insert at Beginning
+Menambahkan data baru di indeks 0, dan menggeser semua data ke kanan.
+2. Insert at Given Position
+Menambahkan data baru di indeks tertentu sesuai input user.
+3. Insert at End
+Menambahkan data baru di posisi terakhir (count).
+4. Delete from Beginning
+Menghapus data pada indeks 0, dan menggeser semua data ke kiri.
+5. Delete at Given Position
+Menghapus data pada indeks tertentu.
+6. Delete from End
+Menghapus data terakhir.
+7. Delete First Occurrence
+Menghapus data mahasiswa pertama yang cocok berdasarkan NIM.
+8. Show Data
+Menampilkan seluruh data mahasiswa yang tersimpan.
+9. Exit
+Menghentikan program.
+
+Aturan Logika Wajib
+
+1. Setiap insert berhasil:
+count = count + 1
+
+2. Setiap delete berhasil:
+count = count - 1
+
+
+Program harus menangani kondisi:
+
+1. Array penuh (overflow)
+2. Array kosong (underflow)
+3. Posisi indeks tidak valid
+4. Program tidak boleh crash, harus menampilkan pesan error yang logis.
+5. Output yang Diharapkan
+6. Program berjalan dalam loop menu, contoh:
+
+=== MENU DATA MAHASISWA ===
+1. Insert at Beginning
+2. Insert at Given Position
+...
+Pilih menu:
