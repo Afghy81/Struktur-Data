@@ -58,6 +58,36 @@ Ketentuan Fitur:
    * Input nomor urut dengan validasi angka.
    * Jika valid, tampilkan berita tanpa delay.
 
+6. Efek Pergerakan Teks
+
+   * Target Method: displayForward() dan displayBackward().
+   * Mekanisme: Teks berita bergerak dari kanan ke kiri secara dinamis.
+   * Batasan: Gunakan lebar console standar sebagai batas tampilan.
+   * Padding: Tambahkan spasi di awal dan akhir string berita.
+   * Teknik: Gunakan fungsi substring() secara bertahap untuk simulasi gerak.
+   * Timing: Gunakan Thread.sleep(150) sampai (250) ms agar animasi halus.
+
+7. Perulangan Berita
+
+   * Transisi: Setelah berita selesai bergeser, lanjut ke berita berikutnya.
+   * Navigasi: Forward menggunakan 'next', Backward menggunakan 'prev'.
+   * Kontinuitas: Perulangan berjalan terus-menerus karena struktur data 
+     bersifat circular (kembali ke head/tail).
+
+8. Kontrol Enter Untuk Keluar
+
+   * Multithreading: Gunakan class Thread atau Runnable terpisah untuk 
+     menjalankan Scanner(System.in).
+   * Flag Stop: Gunakan variabel boolean volatile (misal: isRunning) untuk 
+     menghentikan loop animasi secara aman.
+   * Feedback: Tampilkan pesan "Kembali ke menu..." setelah loop berhenti.
+
+9. Stabilitas Program
+
+   * Responsivitas: Program tidak boleh blocking (macet) saat menunggu input.
+   * Integritas: Struktur circular linked list tidak boleh berubah/rusak.
+   * UI Frame: Nomor urut berita wajib muncul secara konsisten di setiap 
+     frame animasi.
 
 Validasi Input User:
 
@@ -137,6 +167,41 @@ Ketentuan Fitur:
 
    * Validasi input sama seperti hapus.
    * Jika valid, tampilkan berita tanpa delay.
+
+6. Efek Pergerakan Teks
+
+   * Target Method: display_forward() dan display_backward().
+   * Lebar Terminal: Gunakan shutil.get_terminal_size().columns untuk 
+     deteksi otomatis.
+   * Padding: Tambahkan spasi di sisi kiri dan kanan teks berita.
+   * Teknik: Gunakan teknik string slicing [start:end] untuk menggeser teks.
+   * Timing: Gunakan time.sleep(0.2) hingga (0.3) detik untuk animasi yang 
+     smooth.
+
+7. Perulangan Berita
+
+   * Jeda: Berikan delay (misal: 3 detik) setiap satu berita selesai tampil 
+     penuh sebelum ganti berita.
+   * Navigasi: Forward lewat self.next, Backward lewat self.prev.
+   * Kontinuitas: Animasi tidak berhenti (infinite loop) selama flag 
+     penghenti belum aktif.
+
+8. Kontrol Enter Untuk Keluar
+
+   * Threading: Jalankan fungsi input() pada thread terpisah menggunakan 
+     library threading.
+   * Signal: Gunakan threading.Event() sebagai penanda (flag) untuk 
+     menghentikan perulangan.
+   * Cleanup: Bersihkan baris terminal (ANSI escape) sebelum kembali ke 
+     menu utama.
+
+9. Stabilitas Program
+
+   * Robustness: Pastikan tidak ada runtime error atau freeze saat user 
+     menekan ENTER secara tiba-tiba.
+   * Struktur Data: Objek dalam circular list harus tetap konsisten.
+   * Visual: Pastikan nomor urut berita tetap terlihat pada setiap baris 
+     animasi yang berjalan.
 
 Validasi Input User:
 
