@@ -1,16 +1,14 @@
 # PROMPT JAVA
+# MENGGUNAKAN COPILOT AGENT dan ChatGPT 
 
 Buat program Java berbasis console untuk simulasi teks berjalan berita seperti yang sering tampil di televisi menggunakan struktur data Circular Doubly Linked List (CDLL).
 
 Spesifikasi Struktur Data:
-
 1. Buat class Node dengan atribut:
-
    * String berita
    * Node next
    * Node prev
 2. Buat class CircularDoublyLinkedList dengan atribut:
-
    * Node head
    * int size
 3. Struktur harus bersifat circular (node terakhir menunjuk ke head) dan doubly linked (memiliki next dan prev).
@@ -59,6 +57,7 @@ Ketentuan Fitur:
 
    * Input nomor urut dengan validasi angka.
    * Jika valid, tampilkan berita tanpa delay.
+
 
 Validasi Input User:
 
