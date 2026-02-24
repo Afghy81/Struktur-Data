@@ -1,4 +1,19 @@
 import time
+import sys
+import threading
+import shutil
+
+
+SCROLL_SPEED = 0.2   # kecepatan animasi huruf
+DELAY_BETWEEN = 3     # delay antar berita (3 detik)
+
+#WIDTH = flexible, disesuaikan dengan lebar terminal
+def get_terminal_width():
+    return shutil.get_terminal_size().columns
+
+def wait_for_enter(stop_event):
+		input()  # tunggu ENTER
+		stop_event.set()
 
 # Node class for CDLL
 class Node:
@@ -7,11 +22,14 @@ class Node:
 		self.next = None
 		self.prev = None
 
+
 # Circular Doubly Linked List class
 class CircularDoublyLinkedList:
 	def __init__(self):
 		self.head = None
 		self.size = 0
+	
+	
 
 	# Insert berita di akhir list
 	def insert(self, berita):
@@ -54,39 +72,105 @@ class CircularDoublyLinkedList:
 		next_node.prev = prev_node
 		self.size -= 1
 		return True
+	
+	
 
 	# Tampilkan berita forward dengan delay 3 detik
 	def display_forward(self):
-		"""Menampilkan berita dari head ke tail dengan delay 3 detik."""
 		if self.head is None:
 			print("Belum ada berita.")
 			return
+
+		stop_event = threading.Event()
+		threading.Thread(target=wait_for_enter, args=(stop_event,), daemon=True).start()
+
+		print("Tekan ENTER untuk kembali ke menu...\n")
+
 		current = self.head
 		no = 1
-		while True:
-			print(f"{no}. {current.berita}")
-			time.sleep(3)
+
+		while not stop_event.is_set():
+
+			text = f"[{no}] {current.berita}"
+			width = shutil.get_terminal_size().columns
+			padding = " " * width
+			scroll_text = padding + text + padding
+
+			position = 0
+
+			# Animasi kanan ➜ kiri
+			while position + width <= len(scroll_text) and not stop_event.is_set():
+				frame = scroll_text[position:position + width]
+				sys.stdout.write("\r" + frame)
+				sys.stdout.flush()
+				time.sleep(SCROLL_SPEED)
+				position += 1
+
+			# Delay 3 detik antar berita (tetap bisa keluar saat delay)
+			start = time.time()
+			while time.time() - start < DELAY_BETWEEN:
+				if stop_event.is_set():
+					break
+				time.sleep(0.1)
+
 			current = current.next
-			no += 1
 			if current == self.head:
-				break
+				no = 1
+			else:
+				no += 1
+
+		# Bersihkan baris
+		width = get_terminal_width()
+		sys.stdout.write("\r" + " " * width + "\r")
+		print("Kembali ke menu...")
 
 	# Tampilkan berita backward dengan delay 3 detik
 	def display_backward(self):
-		"""Menampilkan berita dari tail ke head dengan delay 3 detik."""
 		if self.head is None:
 			print("Belum ada berita.")
 			return
-		tail = self.head.prev
-		current = tail
+
+		stop_event = threading.Event()
+		threading.Thread(target=wait_for_enter, args=(stop_event,), daemon=True).start()
+
+		print("Tekan ENTER untuk kembali ke menu...\n")
+
+		current = self.head.prev
 		no = self.size
-		while True:
-			print(f"{no}. {current.berita}")
-			time.sleep(3)
+
+		while not stop_event.is_set():
+
+			text = f"[{no}] {current.berita}"
+			width = shutil.get_terminal_size().columns
+			padding = " " * width
+			scroll_text = padding + text + padding
+
+			position = 0
+
+			# Animasi kanan ➜ kiri
+			while position + width <= len(scroll_text) and not stop_event.is_set():
+				frame = scroll_text[position:position + width]
+				sys.stdout.write("\r" + frame)
+				sys.stdout.flush()
+				time.sleep(SCROLL_SPEED)
+				position += 1
+
+			# Delay 3 detik antar berita
+			start = time.time()
+			while time.time() - start < DELAY_BETWEEN:
+				if stop_event.is_set():
+					break
+				time.sleep(0.1)
+
 			current = current.prev
-			no -= 1
-			if current == tail:
-				break
+			if current == self.head.prev:
+				no = self.size
+			else:
+				no -= 1
+
+		width = get_terminal_width()
+		sys.stdout.write("\r" + " " * width + "\r")
+		print("Kembali ke menu...")
 
 	# Tampilkan berita tertentu berdasarkan nomor urut
 	def display_by_index(self, index):
@@ -172,6 +256,8 @@ def main():
 		elif pilihan == '6':
 			print("Terima kasih!")
 			break
+		elif pilihan == '7':
+			cdll.display_all() 	# menu debug
 		else:
 			print("Menu tidak valid!")
 		print()

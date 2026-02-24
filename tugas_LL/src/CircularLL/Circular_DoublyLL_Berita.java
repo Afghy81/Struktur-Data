@@ -1,6 +1,7 @@
 package CircularLL;
 
 import java.util.Scanner;
+import java.io.IOException;
 
 // Node class for CDLL
 class Node {
@@ -68,53 +69,138 @@ class CircularDoublyLinkedList {
 		Node nextNode = current.next;
 		prevNode.next = nextNode;
 		nextNode.prev = prevNode;
-		// If deleting tail
-		if (current == head.prev) {
-			// nothing extra needed, already handled
+
+		// Update head
+		if (current == head) {
+			head = head.next; 
 		}
 		size--;
 		return true;
 	}
 
-	// Tampilkan berita forward dengan delay 3 detik
-	public void displayForward() {
-		if (head == null) {
-			System.out.println("Belum ada berita.");
-			return;
-		}
-		Node current = head;
-		int no = 1;
-		do {
-			System.out.println(no + ". " + current.berita);
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
+	private static final int WIDTH = 50; // lebar console (bisa disesuaikan)
+	// private static final int DELAY = 300; // 100ms per frame (smooth)
+
+	private boolean isEnterPressed() {
+		try {
+			while (System.in.available() > 0) {
+				System.in.read();
+				return true;
 			}
-			current = current.next;
-			no++;
-		} while (current != head);
+		} catch (IOException ignored) {}
+		return false;
 	}
 
-	// Tampilkan berita backward dengan delay 3 detik
-	public void displayBackward() {
-		if (head == null) {
-			System.out.println("Belum ada berita.");
-			return;
-		}
-		Node tail = head.prev;
-		Node current = tail;
-		int no = size;
-		do {
-			System.out.println(no + ". " + current.berita);
+	public void scrollForward() {
+    if (head == null) {
+        System.out.println("Belum ada berita.");
+        return;
+    }
+
+    System.out.println("\nTekan ENTER untuk kembali ke menu...\n");
+
+    Node current = head;
+    int no = 1;
+
+    while (true) {
+
+        String text = "[" + no + "] " + current.berita;
+        String padding = " ".repeat(WIDTH);
+        String scrollText = padding + text + padding;
+
+        int position = 0;
+
+        // animasi geser kanan ➜ kiri
+			while (position + WIDTH <= scrollText.length()) {
+
+				System.out.print("\r" + scrollText.substring(position, position + WIDTH));
+				position++;
+
+				try {
+					Thread.sleep(100); // kecepatan gerak huruf
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					return;
+				}
+
+				if (isEnterPressed()) {
+					System.out.print("\r" + " ".repeat(WIDTH) + "\r");
+					System.out.println("Kembali ke menu...");
+					return;
+				}
+			}
+
+			// Delay 3 detik setelah 1 berita selesai lewat
 			try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
+				return;
 			}
+
+			current = current.next;
+			if (current == head) {
+				no = 1;
+			} else {
+				no++;
+			}
+		}
+	}
+	
+	public void scrollBackward() {
+    if (head == null) {
+        System.out.println("Belum ada berita.");
+        return;
+    }
+
+    System.out.println("\nTekan ENTER untuk kembali ke menu...\n");
+
+    Node current = head.prev; // mulai dari terakhir
+    int no = size;
+
+		while (true) {
+
+			String text = "[" + no + "] " + current.berita;
+			String padding = " ".repeat(WIDTH);
+			String scrollText = padding + text + padding;
+
+			int position = 0;
+
+			// animasi tetap kanan ➜ kiri
+			while (position + WIDTH <= scrollText.length()) {
+
+				System.out.print("\r" + scrollText.substring(position, position + WIDTH));
+				position++;
+
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					return;
+				}
+
+				if (isEnterPressed()) {
+					System.out.print("\r" + " ".repeat(WIDTH) + "\r");
+					System.out.println("Kembali ke menu...");
+					return;
+				}
+			}
+
+			// Delay 3 detik antar berita
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				return;
+			}
+
 			current = current.prev;
-			no--;
-		} while (current != tail);
+			if (current == head.prev) {
+				no = size;
+			} else {
+				no--;
+			}
+		}
 	}
 
 	// Tampilkan berita tertentu berdasarkan nomor urut
@@ -200,10 +286,12 @@ public class Circular_DoublyLL_Berita {
                         }
                         break;
                     case "3":
-                        cdll.displayForward();
+                        cdll.scrollForward();
+						sc.nextLine();
                         break;
                     case "4":
-                        cdll.displayBackward();
+                        cdll.scrollBackward();
+						sc.nextLine();
                         break;
                     case "5":
                         System.out.print("Masukkan nomor urut berita: ");
