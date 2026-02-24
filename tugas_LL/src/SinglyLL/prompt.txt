@@ -1,0 +1,122 @@
+PROMPT GPT-4.1
+
+//PROGRAM JAVA
+
+Buatkan program Java berbasis console menggunakan struktur data Singly LinkedList
+(TIDAK boleh menggunakan library LinkedList bawaan Java).
+
+Spesifikasi Data:
+- Mahasiswa dengan atribut:
+  - String nim
+  - String nama
+
+Struktur class:
+1. Node:
+   - nim
+   - nama
+   - next
+
+2. SinglyLinkedList:
+   - head
+   - count
+   - semua operasi insert dan delete
+
+3. Main class:
+   - menampilkan menu
+   - menangani input user
+
+Menu:
+1. Insert at beginning
+2. Insert at given position (1 sampai count+1)
+3. Insert at end
+4. Delete from beginning
+5. Delete given position (1 sampai count)
+6. Delete from end
+7. Delete first occurrence (berdasarkan nim)
+8. Show data
+9. Exit
+
+Aturan count:
+- Setiap INSERT → count++
+- Setiap DELETE → count--
+
+Validasi input NIM:
+- Hanya boleh berisi angka 0-9
+- Tidak boleh mengandung spasi
+- Jika user langsung tekan ENTER (string kosong),
+  maka operasi dibatalkan dan kembali ke menu
+- Jika input tidak valid, tampilkan pesan error dan minta ulang
+
+Validasi input Nama:
+- Hanya boleh huruf dan spasi
+- Tidak boleh dimulai dengan spasi atau angka
+- Spasi berlebih harus dirapihkan:
+  contoh:
+  "  ahmad   fauzi  " → "Ahmad Fauzi"
+- Setiap kata otomatis Capitalize:
+  "budi santoso" → "Budi Santoso"
+- Jika user tekan ENTER kosong → batal & kembali ke menu
+
+Fitur teknis wajib:
+- Semua operasi memakai traversal manual node
+- Tidak boleh memakai ArrayList, LinkedList, atau koleksi Java
+- Gunakan Scanner
+- Program berjalan dalam loop sampai Exit dipilih
+- Setiap method diberi komentar penjelasan
+
+//PROGRAM PYTHON
+
+Buatkan program Python berbasis terminal menggunakan struktur data Singly LinkedList
+(TIDAK boleh menggunakan list Python atau library struktur data).
+
+Spesifikasi Data:
+- Mahasiswa dengan atribut:
+  - nim (string)
+  - nama (string)
+
+Class:
+1. Node:
+   - nim
+   - nama
+   - next
+
+2. SinglyLinkedList:
+   - head
+   - count
+   - semua method insert dan delete
+
+Menu:
+1. Insert at beginning
+2. Insert at given position (1 sampai count+1)
+3. Insert at end
+4. Delete from beginning
+5. Delete given position (1 sampai count)
+6. Delete from end
+7. Delete first occurrence (berdasarkan nim)
+8. Show data
+9. Exit
+
+Aturan count:
+- Insert → count += 1
+- Delete → count -= 1
+
+Validasi input NIM:
+- Hanya boleh angka
+- Tidak boleh ada spasi
+- Jika user tekan ENTER kosong → batal & kembali ke menu
+- Jika tidak valid → tampilkan pesan & minta ulang
+
+Validasi input Nama:
+- Hanya huruf dan spasi
+- Tidak boleh diawali spasi atau angka
+- Spasi berlebih harus dirapihkan:
+  "  ahmad   fauzi  " → "Ahmad Fauzi"
+- Otomatis Capitalize setiap kata
+- ENTER kosong → batal & kembali ke menu
+
+Fitur teknis wajib:
+- Semua traversal manual pakai while
+- Tidak boleh pakai list, deque, pandas, dll
+- Menu loop pakai while True
+- Setiap operasi cetak status berhasil/gagal
+- Method terpisah rapi

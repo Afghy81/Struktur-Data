@@ -1,0 +1,154 @@
+# PROMPT JAVA
+
+Buat program Java berbasis console untuk simulasi teks berjalan berita seperti yang sering tampil di televisi menggunakan struktur data Circular Doubly Linked List (CDLL).
+
+Spesifikasi Struktur Data:
+
+1. Buat class Node dengan atribut:
+
+   * String berita
+   * Node next
+   * Node prev
+2. Buat class CircularDoublyLinkedList dengan atribut:
+
+   * Node head
+   * int size
+3. Struktur harus bersifat circular (node terakhir menunjuk ke head) dan doubly linked (memiliki next dan prev).
+
+Menu Program (ditampilkan berulang sampai user memilih Exit):
+===== MENU BERITA =====
+
+1. Insert berita (ditambahkan di akhir)
+2. Hapus berita (berdasarkan nomor urut)
+3. Tampilkan berita Forward (delay 3 detik)
+4. Tampilkan berita Backward (delay 3 detik)
+5. Tampil berita tertentu (berdasarkan nomor urut)
+6. Exit
+
+Ketentuan Fitur:
+
+1. Insert Berita
+
+   * Berita selalu ditambahkan di akhir list.
+   * Jika user hanya menekan ENTER, kembali ke menu.
+   * Rapikan spasi: hilangkan spasi depan dan belakang, dan ubah spasi ganda menjadi satu spasi.
+   * Jika kosong setelah dirapikan, tampilkan pesan error.
+
+2. Hapus Berita
+
+   * Input berupa nomor urut (dimulai dari 1).
+   * Input hanya boleh angka (tidak boleh huruf atau simbol).
+   * Jika kosong, kembali ke menu.
+   * Jika nomor tidak valid atau melebihi size, tampilkan pesan error.
+   * Tangani kondisi hapus head, tail, node tengah, dan satu-satunya node.
+
+3. Tampilkan Forward
+
+   * Jika kosong, tampilkan pesan.
+   * Tampilkan dari head ke tail.
+   * Gunakan Thread.sleep(3000) untuk delay 3 detik antar berita.
+   * Tampilkan nomor urut setiap berita.
+
+4. Tampilkan Backward
+
+   * Jika kosong, tampilkan pesan.
+   * Mulai dari tail (head.prev) ke head.
+   * Gunakan delay 3 detik antar berita.
+
+5. Tampil Berita Tertentu
+
+   * Input nomor urut dengan validasi angka.
+   * Jika valid, tampilkan berita tanpa delay.
+
+Validasi Input User:
+
+* Gunakan Scanner.
+* Gunakan pengecekan seperti isEmpty() dan regex untuk memastikan hanya angka.
+* Tangani kemungkinan error agar program tidak crash.
+* Gunakan loop agar menu terus berjalan sampai user memilih Exit.
+
+Ketentuan Tambahan:
+
+* Gunakan method terpisah untuk setiap operasi (insert, deleteByIndex, displayForward, displayBackward, displayByIndex).
+* Tambahkan komentar penjelasan pada setiap method.
+* Gunakan prinsip OOP yang rapi.
+* Program harus dapat dijalankan tanpa error.
+
+====================================================================
+
+# PROMPT PYTHON
+
+Buat program Python berbasis console untuk simulasi teks berjalan berita seperti yang sering tampil di televisi menggunakan struktur data Circular Doubly Linked List (CDLL).
+
+Spesifikasi Struktur Data:
+
+1. Buat class Node dengan atribut:
+
+   * self.berita
+   * self.next
+   * self.prev
+2. Buat class CircularDoublyLinkedList dengan atribut:
+
+   * self.head
+   * self.size
+3. Struktur harus bersifat circular dan doubly linked.
+
+Menu Program (gunakan while True agar terus berjalan):
+===== MENU BERITA =====
+
+1. Insert berita
+2. Hapus berita
+3. Tampilkan berita Forward (delay 3 detik)
+4. Tampilkan berita Backward (delay 3 detik)
+5. Tampil berita tertentu
+6. Exit
+
+Ketentuan Fitur:
+
+1. Insert Berita
+
+   * Tambahkan berita di akhir list.
+   * Jika user hanya tekan ENTER, kembali ke menu.
+   * Gunakan strip() untuk menghapus spasi depan dan belakang.
+   * Gunakan ' '.join(teks.split()) untuk merapikan spasi berlebih.
+   * Jika kosong setelah dirapikan, tampilkan pesan error.
+
+2. Hapus Berita
+
+   * Input nomor urut (dimulai dari 1).
+   * Gunakan isdigit() untuk memastikan input hanya angka.
+   * Jika kosong, kembali ke menu.
+   * Jika index tidak valid, tampilkan pesan error.
+   * Tangani hapus head, tail, tengah, dan satu-satunya node.
+
+3. Tampilkan Forward
+
+   * Jika kosong, tampilkan pesan.
+   * Gunakan time.sleep(3) untuk delay 3 detik.
+   * Tampilkan berita dari head sampai kembali ke head.
+   * Tampilkan nomor urut.
+
+4. Tampilkan Backward
+
+   * Mulai dari self.head.prev.
+   * Iterasi mundur sampai kembali ke titik awal.
+   * Gunakan delay 3 detik.
+
+5. Tampil Berita Tertentu
+
+   * Validasi input sama seperti hapus.
+   * Jika valid, tampilkan berita tanpa delay.
+
+Validasi Input User:
+
+* Tangani input kosong.
+* Tangani input bukan angka.
+* Tangani index di luar batas.
+* Gunakan exception handling bila diperlukan.
+
+Ketentuan Tambahan:
+
+* Gunakan method terpisah (insert, delete_by_index, display_forward, display_backward, display_by_index).
+* Tambahkan komentar pada setiap method.
+* Kode harus bersih dan mudah dipahami mahasiswa.
+* Program harus dapat dijalankan tanpa error.

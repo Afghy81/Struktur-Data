@@ -1,3 +1,4 @@
+package SinglyLL;
 import java.util.Scanner;
 
 // Node class for Mahasiswa
