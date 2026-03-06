@@ -58,36 +58,39 @@ Ketentuan Fitur:
    * Input nomor urut dengan validasi angka.
    * Jika valid, tampilkan berita tanpa delay.
 
-6. Efek Pergerakan Teks
+Ketentuan Gerak Teks Berita :
 
-   * Target Method: displayForward() dan displayBackward().
-   * Mekanisme: Teks berita bergerak dari kanan ke kiri secara dinamis.
-   * Batasan: Gunakan lebar console standar sebagai batas tampilan.
-   * Padding: Tambahkan spasi di awal dan akhir string berita.
-   * Teknik: Gunakan fungsi substring() secara bertahap untuk simulasi gerak.
-   * Timing: Gunakan Thread.sleep(150) sampai (250) ms agar animasi halus.
+1. Alur Pergerakan Teks (Vertical Swipe)
+   * Titik Awal: Teks berita wajib muncul pertama kali dari baris paling 
+     bawah pada jendela console.
+   * Gerakan Naik: Teks bergerak secara vertikal ke atas menuju posisi 
+     tengah layar secara bertahap.
+   * Mekanisme: Gunakan manipulasi karakter "new line" (\n) atau library 
+     untuk menggeser posisi baris teks ke atas.
 
-7. Perulangan Berita
+2. Mekanisme Jeda Dan Kecepatan
+   * Durasi Berhenti: Saat teks mencapai posisi tengah layar, berikan 
+     jeda (Thread.sleep) selama 3 detik untuk proses membaca.
+   * Kehalusan Animasi: Gunakan interval Thread.sleep(100-200ms) saat 
+     proses pergeseran agar efek "swipe" terlihat halus (tidak instan).
+   * Fase Keluar: Setelah jeda berakhir, teks lanjut bergerak naik ke 
+     atas hingga benar-benar keluar dari pandangan layar.
 
-   * Transisi: Setelah berita selesai bergeser, lanjut ke berita berikutnya.
-   * Navigasi: Forward menggunakan 'next', Backward menggunakan 'prev'.
-   * Kontinuitas: Perulangan berjalan terus-menerus karena struktur data 
-     bersifat circular (kembali ke head/tail).
+3. Logika Traversal Berita
+   * Mode Forward: Animasi dimulai dari elemen 'Head' dan berlanjut 
+     mengikuti pointer 'Next' secara circular.
+   * Mode Backward: Animasi dimulai dari elemen 'Tail' dan berlanjut 
+     mundur mengikuti pointer 'Prev' secara circular.
+   * Kontinuitas: Setelah berita pertama keluar layar, berita berikutnya 
+     harus langsung masuk dari bawah tanpa jeda kosong yang lama.
 
-8. Kontrol Enter Untuk Keluar
-
-   * Multithreading: Gunakan class Thread atau Runnable terpisah untuk 
-     menjalankan Scanner(System.in).
-   * Flag Stop: Gunakan variabel boolean volatile (misal: isRunning) untuk 
-     menghentikan loop animasi secara aman.
-   * Feedback: Tampilkan pesan "Kembali ke menu..." setelah loop berhenti.
-
-9. Stabilitas Program
-
-   * Responsivitas: Program tidak boleh blocking (macet) saat menunggu input.
-   * Integritas: Struktur circular linked list tidak boleh berubah/rusak.
-   * UI Frame: Nomor urut berita wajib muncul secara konsisten di setiap 
-     frame animasi.
+4. Kontrol Threading Dan Input
+   * Non-Blocking Input: Implementasikan Thread atau Runnable terpisah 
+     untuk memantau input tombol [ENTER].
+   * Penghentian Aman: Gunakan flag boolean (misal: volatile boolean 
+     isLive) agar animasi berhenti dengan bersih saat user menekan ENTER.
+   * Reset Tampilan: Bersihkan console (Print banyak baris kosong atau 
+     ANSI escape) sebelum kembali ke menu utama.
 
 Validasi Input User:
 
@@ -168,40 +171,40 @@ Ketentuan Fitur:
    * Validasi input sama seperti hapus.
    * Jika valid, tampilkan berita tanpa delay.
 
-6. Efek Pergerakan Teks
+Ketentuan Gerak Teks Berita :
 
-   * Target Method: display_forward() dan display_backward().
-   * Lebar Terminal: Gunakan shutil.get_terminal_size().columns untuk 
-     deteksi otomatis.
-   * Padding: Tambahkan spasi di sisi kiri dan kanan teks berita.
-   * Teknik: Gunakan teknik string slicing [start:end] untuk menggeser teks.
-   * Timing: Gunakan time.sleep(0.2) hingga (0.3) detik untuk animasi yang 
-     smooth.
+1. Efek Pergerakan Teks (Vertical Swipe)
+   * Arah Gerakan: Teks bergerak secara vertikal dari bawah ke atas.
+   * Titik Muncul: Berita harus muncul pertama kali dari baris paling 
+     bawah terminal/console.
+   * Transisi Naik: Gunakan iterasi baris kosong yang berkurang secara 
+     bertahap untuk mendorong teks naik ke posisi tengah.
+   * Keluar Layar: Setelah jeda, teks lanjut bergerak naik hingga 
+     benar-benar hilang dari layar sebelum digantikan berita baru.
 
-7. Perulangan Berita
+2. Perilaku Jeda Dan Display
+   * Fokus Tengah: Saat teks mencapai posisi tengah layar, proses 
+     animasi harus berhenti sejenak.
+   * Durasi Jeda: Berikan interval waktu (Delay) selama 3 detik agar 
+     konten berita dapat dibaca sepenuhnya oleh pengguna.
+   * Kehalusan: Gunakan time.sleep (Python) atau Thread.sleep (Java) 
+     dengan angka kecil saat proses "naik" agar gerakan terlihat smooth.
 
-   * Jeda: Berikan delay (misal: 3 detik) setiap satu berita selesai tampil 
-     penuh sebelum ganti berita.
-   * Navigasi: Forward lewat self.next, Backward lewat self.prev.
-   * Kontinuitas: Animasi tidak berhenti (infinite loop) selama flag 
-     penghenti belum aktif.
+3. Navigasi Dan Struktur Circular
+   * Mode Forward: Iterasi dimulai dari 'Head' dan bergerak maju 
+     menggunakan pointer 'Next'.
+   * Mode Backward: Iterasi dimulai dari 'Tail' dan bergerak mundur 
+     menggunakan pointer 'Prev'.
+   * Loop Terus-Menerus: Karena struktur data bersifat circular, animasi 
+     tidak boleh berhenti setelah berita terakhir selesai ditampilkan.
 
-8. Kontrol Enter Untuk Keluar
-
-   * Threading: Jalankan fungsi input() pada thread terpisah menggunakan 
-     library threading.
-   * Signal: Gunakan threading.Event() sebagai penanda (flag) untuk 
-     menghentikan perulangan.
-   * Cleanup: Bersihkan baris terminal (ANSI escape) sebelum kembali ke 
-     menu utama.
-
-9. Stabilitas Program
-
-   * Robustness: Pastikan tidak ada runtime error atau freeze saat user 
-     menekan ENTER secara tiba-tiba.
-   * Struktur Data: Objek dalam circular list harus tetap konsisten.
-   * Visual: Pastikan nomor urut berita tetap terlihat pada setiap baris 
-     animasi yang berjalan.
+4. Kontrol Input Dan Stabilitas
+   * Interupsi User: Sistem tetap harus responsif menerima input [ENTER] 
+     kapan saja untuk menghentikan animasi.
+   * Multithreading: Gunakan thread terpisah (threading di Python atau 
+     Thread class di Java) agar proses input tidak mematikan animasi.
+   * Clean Exit: Pastikan terminal dibersihkan (Clear Screen) saat user 
+     memilih untuk keluar kembali ke menu utama.
 
 Validasi Input User:
 
