@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Simulasi Antrian Bank</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Simulasi Antrian Bank</h2>
+
+        <input type="text" id="nama" placeholder="Masukkan nama">
+        <button onclick="ambil()">Ambil Antrian</button>
+
+        <button onclick="lihat()">Lihat Antrian</button>
+        <pre id="list"></pre>
+
+        <button onclick="panggil()">Panggil Antrian</button>
+
+        <div id="notif" class="notif-box"></div>
+        <h3 id="hasil"></h3>
+    </div>
+    <div id="notif" class="notif-box"></div>
+<script>
+function ambil() {
+    let input = document.getElementById("nama");
+    let nama = input.value.trim();
+
+    // validasi sederhana
+    if (nama === "") {
+        alert("Nama tidak boleh kosong");
+        return;
+    }
+
+    fetch("/ambil", {
+        method: "POST",
+        body: nama
+    })
+    .then(res => res.text())
+    .then(data => {
+        // tampilkan notifikasi ke UI
+        let notif = document.getElementById("notif");
+        notif.innerText = data;
+        notif.classList.add("show");
+
+        // 🔥 reset input setelah berhasil
+        input.value = "";
+
+        // opsional: fokus kembali ke input
+        input.focus();
+    });
+}
+// function ambil() {
+//     let nama = document.getElementById("nama").value;
+
+//     fetch("/ambil", {
+//         method: "POST",
+//         body: nama
+//     })
+//     .then(res => res.text())
+//     .then(data => {
+//         // tampilkan ke UI, bukan alert
+//         let notif = document.getElementById("notif");
+//         notif.innerText = data;
+
+//         // opsional: tampilkan dengan efek
+//         notif.style.display = "block";
+//     });
+// }
+
+function lihat() {
+    fetch("/list")
+    .then(res => res.text())
+    .then(data => {
+        let list = document.getElementById("list");
+
+        if (data === "Antrian kosong") {
+            list.innerText = "Antrian Kosong";
+        } else {
+            list.innerText = data;
+        }
+    });
+}
+
+function panggil() {
+    fetch("/panggil")
+    .then(res => res.text())
+    .then(data => {
+
+         if (data === "EMPTY") {
+            document.getElementById("hasil").innerText = "Antrian kosong";
+            document.getElementById("list").innerText = "";
+            return;
+        }
+
+        if (data.includes("|")) {
+            let [nomor, nama] = data.split("|");
+
+            let text = "Nomor " + nomor + ", atas nama " + nama;
+            document.getElementById("hasil").innerText = text;
+
+            function speak(teks) {
+                let msg = new SpeechSynthesisUtterance(teks);
+
+                let voices = speechSynthesis.getVoices();
+
+                // ambil voice Indonesia (lebih fleksibel)
+                let indoVoice = voices.find(v => v.lang.includes("id"));
+
+                if (indoVoice) {
+                    msg.voice = indoVoice;
+                }
+
+                msg.lang = "id-ID";
+                msg.rate = 0.9;
+                msg.pitch = 1;
+
+                speechSynthesis.speak(msg); // 🔥 ini WAJIB ada
+            }
+
+            // jeda agar suara lebih natural seperti mesin antrian
+            speak("Nomor antrian");
+            setTimeout(() => speak(nomor), 1200);
+            setTimeout(() => speak("atas nama " + nama), 2500);
+
+        } else {
+            alert(data);
+        }
+    });
+}
+</script>
+
+</body>
+</html>
