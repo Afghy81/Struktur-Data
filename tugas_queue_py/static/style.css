@@ -1,0 +1,44 @@
+body {
+    font-family: Arial;
+    background: linear-gradient(135deg,#4facfe,#00f2fe);
+}
+
+.container { max-width:800px; margin:auto; }
+
+.card {
+    background:white;
+    padding:20px;
+    margin:15px;
+    border-radius:10px;
+}
+
+button { padding:10px; margin-top:5px; }
+
+.priority-btn { background:orange; }
+
+.called { background:#d4edda; padding:10px; margin-top:10px; }
+
+.modal {
+    display: none; /* default hidden */
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 20px;
+    width: 300px;
+    border-radius: 8px;
+}
+
+.close {
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulasi Antrian</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card">
+        <h3>Priority</h3>
+        <ul>
+            {% if priority %}
+                {% for item in priority %}
+                    <li>#{{ item.nomor }} - {{ item.nama }}</li>
+                {% endfor %}
+            {% else %}
+                <li>Tidak ada antrian priority</li>
+            {% endif %}
+        </ul>
+
+        <h3>Normal</h3>
+        <ul>
+            {% if normal %}
+                {% for item in normal %}
+                    <li>#{{ item.nomor }} - {{ item.nama }}</li>
+                {% endfor %}
+            {% else %}
+                <li>Tidak ada antrian</li>
+            {% endif %}
+        </ul>
+
+        <p>Total: {{ total }}</p>
+    </div>
+
+    <div class="card">
+    <h3>Ambil Antrian</h3>
+    <form method="POST" action="/enqueue">
+        <input type="text" name="nama" placeholder="Masukkan Nama" required>
+        <button type="submit">Ambil Nomor</button>
+    </form>
+
+    <button onclick="openModal()">Priority Request</button>
+    </div>
+
+    <div class="card">
+        <form method="POST" action="/dequeue">
+            <button type="submit">Panggil</button>
+        </form>
+
+        {% if called %}
+            <div class="called">
+                Dipanggil: #{{ called.nomor }} - {{ called.nama }}
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- MODAL PRIORITY -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Priority Request</h2>
+        <form method="POST" action="/enqueue_priority">
+            <input type="text" name="nama_depan" placeholder="Nama Depan" required>
+            <input type="text" name="nama_belakang" placeholder="Nama Belakang" required>
+            <input type="text" name="nik" placeholder="NIK" required>
+            <button type="submit">Ambil Prioritas</button>
+        </form>
+    </div>
+</div>
+<div id="app-data"
+     data-called='{{ called | default(None) | tojson | safe }}'
+     data-empty='{{ empty | default(false) | tojson | safe }}'>
+</div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
