@@ -9,7 +9,7 @@ Cara menjalankan:
 2. Compile:
    javac src/Main.java
 3. Run:
-   java -cp src Main
+   java -cp src Main atau ./compile.bat
 
 Catatan input bulk:
 - Bisa paste data dari Excel dalam format dua kolom.

@@ -28,6 +28,7 @@ public class Main extends JFrame {
     static class ParsedRecord {
         final int id;
         final String nama;
+
         ParsedRecord(int id, String nama) {
             this.id = id;
             this.nama = nama;
@@ -48,22 +49,29 @@ public class Main extends JFrame {
     private final JTextField nameField = new JTextField(18);
     private final JTextArea bulkArea = new JTextArea(10, 24);
 
-    private final JComboBox<String> searchModeCombo = new JComboBox<>(new String[]{"ID", "Nama"});
+    private final JComboBox<String> searchModeCombo = new JComboBox<>(new String[] { "ID", "Nama" });
     private final JTextField searchField = new JTextField(18);
 
-    private final JComboBox<String> deleteModeCombo = new JComboBox<>(new String[]{"ID", "Nama"});
+    private final JComboBox<String> deleteModeCombo = new JComboBox<>(new String[] { "ID", "Nama" });
     private final JTextField deleteField = new JTextField(18);
 
     private final JTextArea outputArea = new JTextArea();
     private final JLabel statusLabel = new JLabel("Siap.");
 
     private final TreePanel treePanel = new TreePanel();
+    private JScrollPane treeScrollPane;
 
     // =========================
     // CONSTRUCTOR
     // =========================
     public Main() {
         super("AVL + BST GUI - Visual Tree, Search, Delete, Traversal");
+
+        // Style text fields
+        styleTextField(idField);
+        styleTextField(nameField);
+        styleTextField(searchField);
+        styleTextField(deleteField);
 
         buildUI();
         loadFromFile();
@@ -83,7 +91,8 @@ public class Main extends JFrame {
         setJMenuBar(createMenuBar());
 
         add(createLeftControlPanel(), BorderLayout.WEST);
-        add(createTreeScrollPane(), BorderLayout.CENTER);
+        treeScrollPane = createTreeScrollPane();
+        add(treeScrollPane, BorderLayout.CENTER);
         add(createBottomOutputPanel(), BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
@@ -144,10 +153,60 @@ public class Main extends JFrame {
     }
 
     private JScrollPane createTreeScrollPane() {
+        // Panel wrapper untuk tree dengan zoom controls
+        JPanel treeWrapper = new JPanel(new BorderLayout(5, 5));
+
+        // Zoom control panel di atas
+        JPanel zoomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        zoomPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        zoomPanel.setBackground(new Color(240, 240, 240));
+
+        JLabel zoomLabel = new JLabel("Zoom: 100%");
+        zoomLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        zoomLabel.setPreferredSize(new Dimension(70, 25));
+        treePanel.setZoomLabel(zoomLabel);
+
+        JButton zoomInBtn = new JButton("+ Zoom In");
+        JButton zoomOutBtn = new JButton("- Zoom Out");
+        JButton zoomResetBtn = new JButton("Reset Zoom");
+
+        zoomInBtn.addActionListener(e -> treePanel.zoomIn()); // ✅ Simple!
+        zoomOutBtn.addActionListener(e -> treePanel.zoomOut()); // ✅ Simple!
+        zoomResetBtn.addActionListener(e -> treePanel.resetZoom()); // ✅ Simple!
+
+        // Styling buttons
+        for (JButton btn : new JButton[] { zoomInBtn, zoomOutBtn, zoomResetBtn }) {
+            btn.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+            btn.setFocusPainted(false);
+            btn.setForeground(Color.WHITE);
+            btn.setBackground(new Color(33, 150, 243));
+            btn.setBorderPainted(false);
+            btn.setOpaque(true);
+            btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btn.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(MouseEvent e) {
+                    btn.setBackground(new Color(25, 120, 210));
+                }
+
+                public void mouseExited(MouseEvent e) {
+                    btn.setBackground(new Color(33, 150, 243));
+                }
+            });
+        }
+
+        zoomPanel.add(zoomLabel);
+        zoomPanel.add(zoomInBtn);
+        zoomPanel.add(zoomOutBtn);
+        zoomPanel.add(zoomResetBtn);
+
         treePanel.setBorder(new TitledBorder(new EtchedBorder(), "Visual Tree AVL"));
         JScrollPane sp = new JScrollPane(treePanel);
         sp.setPreferredSize(new Dimension(820, 650));
-        return sp;
+
+        treeWrapper.add(zoomPanel, BorderLayout.NORTH);
+        treeWrapper.add(sp, BorderLayout.CENTER);
+
+        return new JScrollPane(treeWrapper);
     }
 
     private JPanel createBottomOutputPanel() {
@@ -167,7 +226,6 @@ public class Main extends JFrame {
         JPanel outer = new JPanel();
         outer.setLayout(new BoxLayout(outer, BoxLayout.Y_AXIS));
         outer.setBorder(new EmptyBorder(10, 10, 10, 10));
-        outer.setPreferredSize(new Dimension(380, 700));
 
         outer.add(createInputSection());
         outer.add(Box.createVerticalStrut(10));
@@ -205,7 +263,12 @@ public class Main extends JFrame {
             idField.requestFocus();
         });
 
-        c.gridx = 0; c.gridy = 2; c.gridwidth = 2;
+        styleButton(addButton, new Color(33, 150, 243));
+        styleButton(clearButton, new Color(158, 158, 158));
+
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
         p.add(addButton, c);
 
@@ -225,10 +288,14 @@ public class Main extends JFrame {
 
         bulkArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         bulkArea.setLineWrap(false);
+        bulkArea.setRows(16);
+        bulkArea.setMargin(new Insets(10, 8, 10, 8));
 
         String hintText = "Contoh format per baris:\n1001\tBudi Santoso\n1002\tSiti Aminah\natau 1001,Budi Santoso";
         bulkArea.setText(hintText);
         bulkArea.setForeground(Color.GRAY);
+        bulkArea.setBackground(new Color(250, 250, 250));
+        bulkArea.setCaretColor(new Color(33, 150, 243));
 
         bulkArea.addFocusListener(new FocusAdapter() {
             @Override
@@ -236,15 +303,47 @@ public class Main extends JFrame {
                 if (bulkArea.getForeground().equals(Color.GRAY)) {
                     bulkArea.setText("");
                     bulkArea.setForeground(Color.BLACK);
+                    bulkArea.setBackground(Color.WHITE);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (bulkArea.getText().trim().isEmpty()) {
+                    bulkArea.setText(hintText);
+                    bulkArea.setForeground(Color.GRAY);
+                    bulkArea.setBackground(new Color(250, 250, 250));
                 }
             }
         });
 
-        p.add(new JScrollPane(bulkArea), BorderLayout.CENTER);
+        JScrollPane bulkScroll = new JScrollPane(bulkArea);
+        bulkScroll.setBorder(BorderFactory.createMatteBorder(1, 1, 2, 2, new Color(180, 180, 180)));
+        bulkScroll.setPreferredSize(new Dimension(350, 380));
+        bulkScroll.getVerticalScrollBar().setPreferredSize(new Dimension(10, 0));
+        p.add(bulkScroll, BorderLayout.CENTER);
 
         JButton importButton = new JButton("Tambah dari Paste");
+        importButton.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        importButton.setBackground(new Color(76, 175, 80));
+        importButton.setForeground(Color.WHITE);
+        importButton.setFocusPainted(false);
+        importButton.setBorderPainted(false);
+        importButton.setOpaque(true);
+        importButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        importButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                importButton.setBackground(new Color(56, 142, 60));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                importButton.setBackground(new Color(76, 175, 80));
+            }
+        });
         importButton.addActionListener(e -> addBulkFromTextArea());
         p.add(importButton, BorderLayout.SOUTH);
+
+        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 450));
         return p;
     }
 
@@ -258,8 +357,11 @@ public class Main extends JFrame {
 
         JButton searchButton = new JButton("Cari");
         searchButton.addActionListener(e -> doSearch());
+        styleButton(searchButton, new Color(33, 150, 243));
 
-        c.gridx = 0; c.gridy = 2; c.gridwidth = 2;
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
         p.add(searchButton, c);
 
@@ -276,8 +378,11 @@ public class Main extends JFrame {
 
         JButton deleteButton = new JButton("Hapus");
         deleteButton.addActionListener(e -> doDelete());
+        styleButton(deleteButton, new Color(244, 67, 54));
 
-        c.gridx = 0; c.gridy = 2; c.gridwidth = 2;
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
         p.add(deleteButton, c);
 
@@ -295,6 +400,10 @@ public class Main extends JFrame {
         inorderBtn.addActionListener(e -> showTraversal("INORDER", getInorder(root)));
         preorderBtn.addActionListener(e -> showTraversal("PREORDER", getPreorder(root)));
         postorderBtn.addActionListener(e -> showTraversal("POSTORDER", getPostorder(root)));
+
+        styleButton(inorderBtn, new Color(156, 39, 176));
+        styleButton(preorderBtn, new Color(156, 39, 176));
+        styleButton(postorderBtn, new Color(156, 39, 176));
 
         p.add(inorderBtn);
         p.add(preorderBtn);
@@ -319,6 +428,9 @@ public class Main extends JFrame {
                 setStatus("Muat ulang selesai. Node: " + countNodes(root));
             }
         });
+
+        styleButton(resetButton, new Color(255, 152, 0));
+        styleButton(reloadButton, new Color(0, 150, 136));
 
         p.add(resetButton);
         p.add(reloadButton);
@@ -398,13 +510,17 @@ public class Main extends JFrame {
         for (String raw : lines) {
             ParsedRecord rec = parseRecord(raw);
             if (rec == null) {
-                if (!raw.trim().isEmpty()) invalid++;
+                if (!raw.trim().isEmpty())
+                    invalid++;
                 continue;
             }
 
             boolean existed = findById(root, rec.id) != null;
             root = insert(root, rec.id, rec.nama);
-            if (existed) updated++; else inserted++;
+            if (existed)
+                updated++;
+            else
+                inserted++;
         }
 
         selectedId = -1;
@@ -413,6 +529,10 @@ public class Main extends JFrame {
 
         log("Paste selesai. Ditambah: " + inserted + ", diperbarui: " + updated + ", format salah: " + invalid);
         setStatus("Paste selesai. Node: " + countNodes(root));
+
+        // Auto-clear input setelah berhasil submit
+        bulkArea.setText("Contoh format per baris:\n1001\tBudi Santoso\n1002\tSiti Aminah\natau 1001,Budi Santoso");
+        bulkArea.setForeground(Color.GRAY);
     }
 
     private void doSearch() {
@@ -441,11 +561,10 @@ public class Main extends JFrame {
 
                 int pos = inorderPositionOfId(found.id);
                 outputArea.setText(
-                    "DATA ANDA BERHASIL DITEMUKAN\n" +
-                    "Urutan node inorder ke-" + pos + "\n\n" +
-                    "ID   : " + found.id + "\n" +
-                    "Nama : " + found.nama + "\n"
-                );
+                        "DATA ANDA BERHASIL DITEMUKAN\n" +
+                                "Urutan node inorder ke-" + pos + "\n\n" +
+                                "ID   : " + found.id + "\n" +
+                                "Nama : " + found.nama + "\n");
                 setStatus("Pencarian selesai.");
             } catch (NumberFormatException ex) {
                 showMessage("ID harus berupa angka.");
@@ -500,7 +619,8 @@ public class Main extends JFrame {
                 }
 
                 root = delete(root, id);
-                if (selectedId == id) selectedId = -1;
+                if (selectedId == id)
+                    selectedId = -1;
                 refreshTreeView();
                 saveToFile();
                 log("Data dihapus: ID=" + id + " | Nama=" + found.nama);
@@ -518,7 +638,8 @@ public class Main extends JFrame {
             if (matches.size() == 1) {
                 Node target = matches.get(0);
                 root = delete(root, target.id);
-                if (selectedId == target.id) selectedId = -1;
+                if (selectedId == target.id)
+                    selectedId = -1;
                 refreshTreeView();
                 saveToFile();
                 log("Data dihapus: ID=" + target.id + " | Nama=" + target.nama);
@@ -530,12 +651,13 @@ public class Main extends JFrame {
             options.append("Ditemukan beberapa data dengan nama yang sama.\n");
             for (Node n : matches) {
                 options.append("ID=").append(n.id)
-                       .append(" | Nama=").append(n.nama)
-                       .append(" | Posisi inorder=").append(inorderPositionOfId(n.id))
-                       .append("\n");
+                        .append(" | Nama=").append(n.nama)
+                        .append(" | Posisi inorder=").append(inorderPositionOfId(n.id))
+                        .append("\n");
             }
             String inputId = JOptionPane.showInputDialog(this, options + "\nMasukkan ID yang ingin dihapus:");
-            if (inputId == null || inputId.trim().isEmpty()) return;
+            if (inputId == null || inputId.trim().isEmpty())
+                return;
 
             try {
                 int id = Integer.parseInt(inputId.trim());
@@ -546,7 +668,8 @@ public class Main extends JFrame {
                 }
 
                 root = delete(root, id);
-                if (selectedId == id) selectedId = -1;
+                if (selectedId == id)
+                    selectedId = -1;
                 refreshTreeView();
                 saveToFile();
                 log("Data dihapus: ID=" + target.id + " | Nama=" + target.nama);
@@ -558,7 +681,8 @@ public class Main extends JFrame {
     }
 
     private void resetData() {
-        if (!confirm("Yakin ingin menghapus semua data?")) return;
+        if (!confirm("Yakin ingin menghapus semua data?"))
+            return;
 
         root = null;
         selectedId = -1;
@@ -616,7 +740,8 @@ public class Main extends JFrame {
     }
 
     private Node insert(Node node, int id, String nama) {
-        if (node == null) return new Node(id, nama);
+        if (node == null)
+            return new Node(id, nama);
 
         if (id < node.id) {
             node.left = insert(node.left, id, nama);
@@ -631,10 +756,12 @@ public class Main extends JFrame {
         int balance = balanceFactor(node);
 
         // Left Left
-        if (balance > 1 && id < node.left.id) return rightRotate(node);
+        if (balance > 1 && id < node.left.id)
+            return rightRotate(node);
 
         // Right Right
-        if (balance < -1 && id > node.right.id) return leftRotate(node);
+        if (balance < -1 && id > node.right.id)
+            return leftRotate(node);
 
         // Left Right
         if (balance > 1 && id > node.left.id) {
@@ -653,12 +780,14 @@ public class Main extends JFrame {
 
     private Node minValueNode(Node node) {
         Node current = node;
-        while (current != null && current.left != null) current = current.left;
+        while (current != null && current.left != null)
+            current = current.left;
         return current;
     }
 
     private Node delete(Node node, int id) {
-        if (node == null) return null;
+        if (node == null)
+            return null;
 
         if (id < node.id) {
             node.left = delete(node.left, id);
@@ -682,13 +811,15 @@ public class Main extends JFrame {
             }
         }
 
-        if (node == null) return null;
+        if (node == null)
+            return null;
 
         node.height = 1 + Math.max(height(node.left), height(node.right));
         int balance = balanceFactor(node);
 
         // Left Left
-        if (balance > 1 && balanceFactor(node.left) >= 0) return rightRotate(node);
+        if (balance > 1 && balanceFactor(node.left) >= 0)
+            return rightRotate(node);
 
         // Left Right
         if (balance > 1 && balanceFactor(node.left) < 0) {
@@ -697,7 +828,8 @@ public class Main extends JFrame {
         }
 
         // Right Right
-        if (balance < -1 && balanceFactor(node.right) <= 0) return leftRotate(node);
+        if (balance < -1 && balanceFactor(node.right) <= 0)
+            return leftRotate(node);
 
         // Right Left
         if (balance < -1 && balanceFactor(node.right) > 0) {
@@ -713,7 +845,8 @@ public class Main extends JFrame {
     // =========================
     private Node findById(Node node, int id) {
         while (node != null) {
-            if (id == node.id) return node;
+            if (id == node.id)
+                return node;
             node = (id < node.id) ? node.left : node.right;
         }
         return null;
@@ -726,8 +859,10 @@ public class Main extends JFrame {
     }
 
     private void findByNameRec(Node node, String nama, List<Node> result) {
-        if (node == null) return;
-        if (node.nama.equalsIgnoreCase(nama)) result.add(node);
+        if (node == null)
+            return;
+        if (node.nama.equalsIgnoreCase(nama))
+            result.add(node);
         findByNameRec(node.left, nama, result);
         findByNameRec(node.right, nama, result);
     }
@@ -742,7 +877,8 @@ public class Main extends JFrame {
     }
 
     private void inorderRec(Node node, List<Node> result) {
-        if (node == null) return;
+        if (node == null)
+            return;
         inorderRec(node.left, result);
         result.add(node);
         inorderRec(node.right, result);
@@ -755,7 +891,8 @@ public class Main extends JFrame {
     }
 
     private void preorderRec(Node node, List<Node> result) {
-        if (node == null) return;
+        if (node == null)
+            return;
         result.add(node);
         preorderRec(node.left, result);
         preorderRec(node.right, result);
@@ -768,7 +905,8 @@ public class Main extends JFrame {
     }
 
     private void postorderRec(Node node, List<Node> result) {
-        if (node == null) return;
+        if (node == null)
+            return;
         postorderRec(node.left, result);
         postorderRec(node.right, result);
         result.add(node);
@@ -777,13 +915,15 @@ public class Main extends JFrame {
     private int inorderPositionOfId(int id) {
         List<Node> list = getInorder(root);
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).id == id) return i + 1;
+            if (list.get(i).id == id)
+                return i + 1;
         }
         return -1;
     }
 
     private int countNodes(Node node) {
-        if (node == null) return 0;
+        if (node == null)
+            return 0;
         return 1 + countNodes(node.left) + countNodes(node.right);
     }
 
@@ -794,10 +934,10 @@ public class Main extends JFrame {
         for (int i = 0; i < list.size(); i++) {
             Node n = list.get(i);
             sb.append(i + 1).append(". ")
-              .append("ID=").append(n.id)
-              .append(" | Nama=").append(n.nama)
-              .append(" | Posisi inorder=").append(inorderPositionOfId(n.id))
-              .append("\n");
+                    .append("ID=").append(n.id)
+                    .append(" | Nama=").append(n.nama)
+                    .append(" | Posisi inorder=").append(inorderPositionOfId(n.id))
+                    .append("\n");
         }
         outputArea.setText(sb.toString());
         setStatus(title + " selesai.");
@@ -807,7 +947,8 @@ public class Main extends JFrame {
     // PERSISTENCE
     // =========================
     private void saveToFile() {
-        try (PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(DATA_FILE), StandardCharsets.UTF_8))) {
+        try (PrintWriter pw = new PrintWriter(
+                new OutputStreamWriter(new FileOutputStream(DATA_FILE), StandardCharsets.UTF_8))) {
             for (Node n : getInorder(root)) {
                 pw.println(n.id + "|" + n.nama);
             }
@@ -819,7 +960,8 @@ public class Main extends JFrame {
     private void loadFromFile() {
         root = null;
         Path path = Paths.get(DATA_FILE);
-        if (!Files.exists(path)) return;
+        if (!Files.exists(path))
+            return;
 
         try {
             List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
@@ -835,18 +977,22 @@ public class Main extends JFrame {
     }
 
     private ParsedRecord parseRecordForFile(String raw) {
-        if (raw == null) return null;
+        if (raw == null)
+            return null;
         String line = raw.trim();
-        if (line.isEmpty()) return null;
+        if (line.isEmpty())
+            return null;
 
         int idx = line.indexOf('|');
-        if (idx <= 0) return null;
+        if (idx <= 0)
+            return null;
         String idPart = line.substring(0, idx).trim();
         String namePart = line.substring(idx + 1).trim();
 
         try {
             int id = Integer.parseInt(idPart);
-            if (namePart.isEmpty()) return null;
+            if (namePart.isEmpty())
+                return null;
             return new ParsedRecord(id, namePart);
         } catch (NumberFormatException ex) {
             return null;
@@ -857,25 +1003,33 @@ public class Main extends JFrame {
     // PARSE FLEXIBLE INPUT
     // =========================
     private ParsedRecord parseRecord(String raw) {
-        if (raw == null) return null;
+        if (raw == null)
+            return null;
         String line = raw.trim();
-        if (line.isEmpty()) return null;
+        if (line.isEmpty())
+            return null;
 
         String[] parts = splitOnce(line, '\t');
-        if (parts == null) parts = splitOnce(line, ',');
-        if (parts == null) parts = splitOnce(line, ';');
-        if (parts == null) parts = splitOnce(line, '|');
+        if (parts == null)
+            parts = splitOnce(line, ',');
+        if (parts == null)
+            parts = splitOnce(line, ';');
+        if (parts == null)
+            parts = splitOnce(line, '|');
         if (parts == null) {
             int idx = line.indexOf(' ');
-            if (idx > 0) parts = new String[]{line.substring(0, idx), line.substring(idx + 1).trim()};
+            if (idx > 0)
+                parts = new String[] { line.substring(0, idx), line.substring(idx + 1).trim() };
         }
 
-        if (parts == null || parts.length < 2) return null;
+        if (parts == null || parts.length < 2)
+            return null;
 
         try {
             int id = Integer.parseInt(parts[0].trim());
             String nama = parts[1].trim();
-            if (nama.isEmpty()) return null;
+            if (nama.isEmpty())
+                return null;
             return new ParsedRecord(id, nama);
         } catch (NumberFormatException ex) {
             return null;
@@ -884,8 +1038,9 @@ public class Main extends JFrame {
 
     private String[] splitOnce(String line, char delimiter) {
         int idx = line.indexOf(delimiter);
-        if (idx <= 0) return null;
-        return new String[]{line.substring(0, idx), line.substring(idx + 1).trim()};
+        if (idx <= 0)
+            return null;
+        return new String[] { line.substring(0, idx), line.substring(idx + 1).trim() };
     }
 
     // =========================
@@ -903,9 +1058,101 @@ public class Main extends JFrame {
         private int xCounter = 0;
         private int maxDepth = 0;
 
+        // Zoom properties
+        private double zoomLevel = 1.0;
+        private final double ZOOM_INCREMENT = 0.1;
+        private final double MIN_ZOOM = 0.5;
+        private final double MAX_ZOOM = 3.0;
+        private JLabel zoomLabel;
+
+        // Pan/Drag properties
+        private int panX = 0;
+        private int panY = 0;
+        private int lastMouseX = 0;
+        private int lastMouseY = 0;
+        private boolean isDragging = false;
+
         TreePanel() {
             setBackground(Color.WHITE);
             setPreferredSize(new Dimension(1200, 700));
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+            // Mouse listeners untuk drag/pan canvas
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    isDragging = true;
+                    lastMouseX = e.getX();
+                    lastMouseY = e.getY();
+                    setCursor(new Cursor(Cursor.MOVE_CURSOR));
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    isDragging = false;
+                    setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+            });
+
+            addMouseMotionListener(new MouseAdapter() {
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    if (isDragging) {
+                        int deltaX = e.getX() - lastMouseX;
+                        int deltaY = e.getY() - lastMouseY;
+
+                        panX += deltaX;
+                        panY += deltaY;
+
+                        lastMouseX = e.getX();
+                        lastMouseY = e.getY();
+
+                        repaint();
+                    }
+                }
+
+                @Override
+                public void mouseMoved(MouseEvent e) {
+                    setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+            });
+        }
+
+        void setZoomLabel(JLabel label) {
+            this.zoomLabel = label;
+        }
+
+        void zoomIn() {
+            if (zoomLabel != null && zoomLevel < MAX_ZOOM) {
+                zoomLevel += ZOOM_INCREMENT;
+                zoomLabel.setText("Zoom: " + getZoomPercentage() + "%"); // ← Auto-update!
+                revalidate();
+                repaint();
+            }
+        }
+
+        void zoomOut() {
+            if (zoomLabel != null && zoomLevel > MIN_ZOOM) {
+                zoomLevel -= ZOOM_INCREMENT;
+                zoomLabel.setText("Zoom: " + getZoomPercentage() + "%"); // ← Auto-update!
+                revalidate();
+                repaint();
+            }
+        }
+
+        void resetZoom() {
+            zoomLevel = 1.0;
+            panX = 0;
+            panY = 0;
+            if (zoomLabel != null) {
+                zoomLabel.setText("Zoom: " + getZoomPercentage() + "%");
+            }
+            revalidate();
+            repaint();
+        }
+
+        int getZoomPercentage() {
+            return (int) (zoomLevel * 100);
         }
 
         @Override
@@ -914,6 +1161,7 @@ public class Main extends JFrame {
             Graphics2D g2 = (Graphics2D) g.create();
             try {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
                 if (root == null) {
                     g2.setColor(new Color(120, 120, 120));
@@ -927,12 +1175,19 @@ public class Main extends JFrame {
                 maxDepth = 0;
                 layout(root, 0);
 
-                int neededW = Math.max(1200, xCounter * H_STEP + LEFT_MARGIN * 2);
-                int neededH = Math.max(700, (maxDepth + 1) * V_STEP + TOP_MARGIN * 2);
+                // Apply zoom scaling
+                int neededW = (int) Math.max(1200, (xCounter * H_STEP + LEFT_MARGIN * 2) * zoomLevel);
+                int neededH = (int) Math.max(700, ((maxDepth + 1) * V_STEP + TOP_MARGIN * 2) * zoomLevel);
                 if (getPreferredSize().width != neededW || getPreferredSize().height != neededH) {
                     setPreferredSize(new Dimension(neededW, neededH));
                     revalidate();
                 }
+
+                // Scale graphics untuk zoom
+                g2.scale(zoomLevel, zoomLevel);
+
+                // Apply pan/drag offset
+                g2.translate(panX / zoomLevel, panY / zoomLevel);
 
                 drawEdges(g2, root);
                 drawNodes(g2, root);
@@ -942,7 +1197,8 @@ public class Main extends JFrame {
         }
 
         private void layout(Node node, int depth) {
-            if (node == null) return;
+            if (node == null)
+                return;
             layout(node.left, depth + 1);
 
             int x = LEFT_MARGIN + xCounter * H_STEP;
@@ -955,9 +1211,11 @@ public class Main extends JFrame {
         }
 
         private void drawEdges(Graphics2D g2, Node node) {
-            if (node == null) return;
+            if (node == null)
+                return;
             Point p = positions.get(node);
-            if (p == null) return;
+            if (p == null)
+                return;
 
             int x1 = p.x + NODE_W / 2;
             int y1 = p.y + NODE_H;
@@ -987,20 +1245,28 @@ public class Main extends JFrame {
         }
 
         private void drawNodes(Graphics2D g2, Node node) {
-            if (node == null) return;
+            if (node == null)
+                return;
             Point p = positions.get(node);
-            if (p == null) return;
+            if (p == null)
+                return;
 
             int x = p.x;
             int y = p.y;
             boolean selected = node.id == selectedId;
 
+            // Modern gradient background
             g2.setColor(selected ? new Color(180, 240, 190) : new Color(245, 248, 252));
             g2.fillRoundRect(x, y, NODE_W, NODE_H, 18, 18);
 
-            g2.setColor(selected ? new Color(40, 120, 60) : new Color(70, 90, 120));
-            g2.setStroke(new BasicStroke(2f));
+            // Modern border dengan shadow effect
+            g2.setColor(selected ? new Color(40, 120, 60) : new Color(100, 150, 200));
+            g2.setStroke(new BasicStroke(2.5f));
             g2.drawRoundRect(x, y, NODE_W, NODE_H, 18, 18);
+
+            // Subtle shadow
+            g2.setColor(new Color(0, 0, 0, 20));
+            g2.fillRoundRect(x + 2, y + 2, NODE_W - 1, NODE_H - 1, 15, 15);
 
             g2.setColor(Color.DARK_GRAY);
             g2.setFont(getFont().deriveFont(Font.BOLD, 14f));
@@ -1020,8 +1286,10 @@ public class Main extends JFrame {
         }
 
         private String shorten(String s, int max) {
-            if (s == null) return "";
-            if (s.length() <= max) return s;
+            if (s == null)
+                return "";
+            if (s.length() <= max)
+                return s;
             return s.substring(0, Math.max(0, max - 3)) + "...";
         }
     }
@@ -1029,6 +1297,36 @@ public class Main extends JFrame {
     // =========================
     // HELPERS
     // =========================
+    private void styleButton(JButton btn, Color bgColor) {
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        btn.setBackground(bgColor);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(true);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.addMouseListener(new MouseAdapter() {
+            Color originalBg = bgColor;
+
+            public void mouseEntered(MouseEvent e) {
+                btn.setBackground(new Color(Math.max(0, bgColor.getRed() - 30),
+                        Math.max(0, bgColor.getGreen() - 30),
+                        Math.max(0, bgColor.getBlue() - 30)));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                btn.setBackground(originalBg);
+            }
+        });
+    }
+
+    private void styleTextField(JTextField field) {
+        field.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        field.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(33, 150, 243)));
+        field.setBackground(new Color(245, 245, 245));
+        field.setMargin(new Insets(5, 5, 5, 5));
+    }
+
     private void refreshTreeView() {
         treePanel.revalidate();
         treePanel.repaint();
@@ -1043,7 +1341,8 @@ public class Main extends JFrame {
     }
 
     private boolean confirm(String message) {
-        return JOptionPane.showConfirmDialog(this, message, "Konfirmasi", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+        return JOptionPane.showConfirmDialog(this, message, "Konfirmasi",
+                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
     }
 
     private void setStatus(String message) {

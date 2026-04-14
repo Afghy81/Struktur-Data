@@ -1,7 +1,22 @@
 {
-    "java.project.sourcePaths": ["src"],
-    "java.project.outputPath": "bin",
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar"
-    ]
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "java.project.sourcePaths": ["src"],
+  "java.project.outputPath": "bin",
+  "java.import.generatesMetadata": true,
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.saveActions.organizeImports": true,
+  "java.format.enabled": true,
+  "java.eclipse.downloadSources": true,
+  "java.references.includeAccessors": true,
+  "editor.parameterHints.enabled": true,
+  "java.inlayHints.parameterNames.enabled": "all",
+  "java.completion.chain.enabled": true,
+  "java.showBuildStatusOnStart": "notification"
 }

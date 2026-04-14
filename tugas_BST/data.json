@@ -197,10 +197,6 @@
       "nama": "sepeda"
     },
     {
-      "id": 5993,
-      "nama": "pulpen"
-    },
-    {
       "id": 6119,
       "nama": "kaos"
     },
@@ -401,7 +397,7 @@
       "nama": "motor"
     }
   ],
-  "last_updated": "2026-04-14T16:46:09.127686",
+  "last_updated": "2026-04-14T18:50:08.498778",
   "version": "1.0",
-  "total_records": 100
+  "total_records": 99
 }

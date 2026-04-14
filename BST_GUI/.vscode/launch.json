@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "App",
+      "request": "launch",
+      "mainClass": "App",
+      "projectName": "BST_GUI_256400d8"
+    },
+    {
+      "name": "Launch Main",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "Main",
+      "projectName": "BST_GUI",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
