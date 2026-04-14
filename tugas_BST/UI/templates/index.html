@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVL Tree Visualisasi & Balancing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- ======================== HEADER ======================== -->
+        <div class="header">
+            <div class="header-content">
+                <h1>🌳 AVL Tree Visualizer</h1>
+                <p>Struktur Data - Pohon Seimbang (Balanced Binary Search Tree)</p>
+            </div>
+        </div>
+
+        <!-- ======================== NAVIGATION ======================== -->
+        <div class="navbar">
+            <div class="nav-container">
+                <button class="nav-btn active" onclick="showTab('dashboard')">📊 Dashboard</button>
+                <button class="nav-btn" onclick="showTab('input')">➕ Input Data</button>
+                <button class="nav-btn" onclick="showTab('search')">🔍 Cari Data</button>
+                <button class="nav-btn" onclick="showTab('delete')">🗑️ Hapus Data</button>
+                <button class="nav-btn" onclick="showTab('traversal')">🔄 Traversal</button>
+                <button class="nav-btn" onclick="showTab('visualization')">📈 Visualisasi</button>
+                <button class="nav-btn" onclick="showTab('info')">ℹ️ Informasi</button>
+            </div>
+        </div>
+
+        <!-- ======================== MAIN CONTENT ======================== -->
+        <div class="main-content">
+            
+            <!-- ======================= DASHBOARD ======================= -->
+            <div id="dashboard" class="tab-content active">
+                <div class="section-header">
+                    <h2>📊 Dashboard</h2>
+                    <h3>Ringkasan Pohon AVL</h3>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-total">0</div>
+                        <div class="stat-label">Total Node</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-height">0</div>
+                        <div class="stat-label">Tinggi Pohon</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-status">📭 Kosong</div>
+                        <div class="stat-label">Status Pohon</div>
+                    </div>
+                </div>
+
+                <!-- ASCII Tree Representation -->
+                <div class="ascii-tree">
+                    <h3>🎨 Representasi ASCII Pohon</h3>
+                    <pre id="ascii-output">(Pohon kosong - tambahkan data terlebih dahulu)</pre>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="refreshDashboard()">🔄 Segarkan Dashboard</button>
+                    <button class="btn btn-info" onclick="showTab('visualization')">📈 Lihat Visualisasi 3D</button>
+                    <button class="btn btn-warning" onclick="if(confirm('Yakin ingin mereset pohon?')) resetTree()">⚠️ Reset Pohon</button>
+                </div>
+            </div>
+
+            <!-- ======================== INPUT DATA ======================== -->
+            <div id="input" class="tab-content">
+                <div class="section-header">
+                    <h2>➕ Input Data</h2>
+                    <h3>Tambah Data ke Pohon AVL</h3>
+                </div>
+
+                <!-- Single Data Input -->
+                <div class="input-section">
+                    <h3>📝 Tambah Data Tunggal</h3>
+                    <p class="info-text">Masukkan satu data dengan ID dan Nama</p>
+                    
+                    <div class="form-group">
+                        <label for="input-id">ID (angka):</label>
+                        <input type="number" id="input-id" placeholder="Contoh: 50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="input-nama">Nama:</label>
+                        <input type="text" id="input-nama" placeholder="Contoh: Ahmad">
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="insertSingleData()">✅ Tambah Data</button>
+                </div>
+
+                <!-- Bulk Data Input -->
+                <div class="input-section">
+                    <h3>📋 Tambah Data Massal</h3>
+                    <p class="info-text">Masukkan multiple data (format: ID,Nama per baris atau separated by tab/semicolon)</p>
+                    
+                    <div class="form-group">
+                        <label for="bulk-input">Data Massal:</label>
+                        <textarea id="bulk-input" placeholder="Format:&#10;50,Ahmad&#10;30,Budi&#10;70,Citra&#10;&#10;atau:&#10;50	Ahmad&#10;30	Budi&#10;70	Citra"></textarea>
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="insertBulkData()">✅ Tambah Data Massal</button>
+                    <button class="btn btn-info" onclick="loadSampleData()">📦 Muat Data Sample</button>
+                </div>
+
+                <!-- Feedback for Input -->
+                <div id="input-feedback" class="feedback"></div>
+            </div>
+
+            <!-- ======================== SEARCH DATA ======================== -->
+            <div id="search" class="tab-content">
+                <div class="section-header">
+                    <h2>🔍 Cari Data</h2>
+                    <h3>Temukan Data dalam Pohon</h3>
+                </div>
+
+                <!-- Search by ID -->
+                <div class="input-section">
+                    <h3>🔎 Cari berdasarkan ID</h3>
+                    <div class="form-group">
+                        <label for="search-id">ID yang dicari:</label>
+                        <input type="number" id="search-id" placeholder="Masukkan ID">
+                    </div>
+                    <button class="btn btn-primary" onclick="searchById()">🔍 Cari ID</button>
+                </div>
+
+                <!-- Search by Name -->
+                <div class="input-section">
+                    <h3>🔎 Cari berdasarkan Nama</h3>
+                    <div class="form-group">
+                        <label for="search-name">Nama yang dicari:</label>
+                        <input type="text" id="search-name" placeholder="Masukkan nama ">
+                    </div>
+                    <button class="btn btn-primary" onclick="searchByName()">🔍 Cari Nama</button>
+                </div>
+
+                <!-- Search Results -->
+                <div id="search-results" class="search-results"></div>
+            </div>
+
+            <!-- ======================== DELETE DATA ======================== -->
+            <div id="delete" class="tab-content">
+                <div class="section-header">
+                    <h2>🗑️ Hapus Data</h2>
+                    <h3>Hapus Node dari Pohon AVL</h3>
+                </div>
+
+                <div class="input-section">
+                    <h3>⚠️ Perhatian: Operasi Penghapusan</h3>
+                    <p class="info-text">Masukkan ID atau nama data yang ingin dihapus. Setelah penghapusan, pohon akan di-rebalance secara otomatis.</p>
+                    
+                    <div class="form-group">
+                        <label for="delete-id">ID untuk dihapus:</label>
+                        <input type="number" id="delete-id" placeholder="Masukkan ID">
+                    </div>
+                    
+                    <button class="btn btn-danger" onclick="deleteDataById()">🗑️ Hapus dengan ID</button>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="input-section">
+                    <div class="form-group">
+                        <label for="delete-name">Nama untuk dihapus:</label>
+                        <input type="text" id="delete-name" placeholder="Masukkan nama">
+                    </div>
+                    
+                    <button class="btn btn-danger" onclick="deleteDataByName()">🗑️ Hapus dengan Nama</button>
+                </div>
+
+                <!-- Delete Feedback -->
+                <div id="delete-feedback" class="feedback"></div>
+            </div>
+
+            <!-- ======================== TRAVERSAL ======================== -->
+            <div id="traversal" class="tab-content">
+                <div class="section-header">
+                    <h2>🔄 Tree Traversal</h2>
+                    <h3>Jelajahi Pohon dengan Berbagai Cara</h3>
+                </div>
+
+                <div class="input-section">
+                    <h3>📍 Pilih Metode Traversal</h3>
+                    <p class="info-text">Pilih cara untuk menjelajahi node-node dalam pohon</p>
+                    
+                    <div class="traversal-buttons">
+                        <button class="btn btn-info" onclick="getTraversal('inorder')">
+                            📋 Inorder (Kiri-Root-Kanan)
+                        </button>
+                        <button class="btn btn-info" onclick="getTraversal('preorder')">
+                            📋 Preorder (Root-Kiri-Kanan)
+                        </button>
+                        <button class="btn btn-info" onclick="getTraversal('postorder')">
+                            📋 Postorder (Kiri-Kanan-Root)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Traversal Results -->
+                <div id="traversal-results" class="traversal-results"></div>
+            </div>
+
+            <!-- ======================== VISUALIZATION ======================== -->
+            <div id="visualization" class="tab-content">
+                <div class="section-header">
+                    <h2>📈 Visualisasi Pohon</h2>
+                    <h3>Tampilan Grafis Struktur Pohon AVL</h3>
+                </div>
+
+                <div class="tree-controls">
+                    <button class="btn btn-primary" onclick="visualizeTree()">🎨 Render Visualisasi Tree</button>
+                    <button class="btn btn-info" onclick="refreshDashboard(); visualizeTree();">🔄 Segarkan Visualisasi</button>
+                </div>
+
+                <div class="tree-visualization" id="tree-visualization">
+                    <div class="tree-empty-message">
+                        📊 Klik "Render Visualisasi Tree" untuk menampilkan pohon<br>
+                        <small>Atau lebih dahulu tambahkan beberapa data</small>
+                    </div>
+                    
+                    <div class="zoom-controls">
+                        <button class="zoom-btn" onclick="zoomIn()" title="Perbesar">➕</button>
+                        <button class="zoom-btn" onclick="zoomOut()" title="Perkecil">➖</button>
+                        <button class="zoom-btn" onclick="resetZoom()" title="Reset Zoom">⟲</button>
+                    </div>
+                    
+                    <div class="zoom-level">
+                        <strong>Zoom: <span id="zoom-percentage">100</span>%</span>
+                    </div>
+                </div>
+
+                <p class="info-text" style="margin-top: 20px;">
+                    💡 Tips: Geser mouse untuk pan, gunakan tombol zoom untuk mengatur ukuran
+                </p>
+            </div>
+
+            <!-- ======================== INFO ======================== -->
+            <div id="info" class="tab-content">
+                <div class="section-header">
+                    <h2>ℹ️ Tentang AVL Tree</h2>
+                </div>
+
+                <div class="info-content">
+                    <h3>📚 Definisi AVL Tree</h3>
+                    <p>
+                        AVL Tree (Adelson-Velsky and Landis Tree) adalah sebuah self-balancing Binary Search Tree (BST). 
+                        Setiap node dalam AVL Tree memiliki balance factor yang didefinisikan sebagai 
+                        <code>tinggi_subtree_kiri - tinggi_subtree_kanan</code>. 
+                        Dalam AVL Tree, balance factor setiap node harus bernilai -1, 0, atau 1.
+                    </p>
+
+                    <h3>⚖️ Operasi Balancing</h3>
+                    <p>
+                        Ketika sebuah operasi insert atau delete menyebabkan balance factor melebihi range [-1, 1], 
+                        pohon harus di-rebalance menggunakan rotasi. Ada empat jenis rotasi:
+                    </p>
+                    <ul>
+                        <li><strong>Left Rotation:</strong> Ketika tree berat ke kanan (balance factor > 1)</li>
+                        <li><strong>Right Rotation:</strong> Ketika tree berat ke kiri (balance factor < -1)</li>
+                        <li><strong>Left-Right Rotation:</strong> Kombinasi rotasi untuk kasus tertentu</li>
+                        <li><strong>Right-Left Rotation:</strong> Kombinasi rotasi untuk kasus tertentu</li>
+                    </ul>
+
+                    <h3>🎯 Tingkat Kompleksitas</h3>
+                    <table class="table">
+                        <tr>
+                            <th>Operasi</th>
+                            <th>Time Complexity</th>
+                            <th>Space Complexity</th>
+                        </tr>
+                        <tr>
+                            <td>Search</td>
+                            <td>O(log n)</td>
+                            <td>O(1)</td>
+                        </tr>
+                        <tr>
+                            <td>Insert</td>
+                            <td>O(log n)</td>
+                            <td>O(log n)</td>
+                        </tr>
+                        <tr>
+                            <td>Delete</td>
+                            <td>O(log n)</td>
+                            <td>O(log n)</td>
+                        </tr>
+                        <tr>
+                            <td>Traversal</td>
+                            <td>O(n)</td>
+                            <td>O(log n)</td>
+                        </tr>
+                    </table>
+
+                    <h3>✨ Keuntungan AVL Tree</h3>
+                    <ul>
+                        <li>Menjamin operasi insert, search, delete dalam waktu O(log n)</li>
+                        <li>Pohon selalu seimbang sehingga mencegah performa worst-case</li>
+                        <li>Cocok untuk aplikasi yang membutuhkan banyak operasi pencarian</li>
+                    </ul>
+
+                    <h3>⏰ Kekurangan AVL Tree</h3>
+                    <ul>
+                        <li>Memerlukan informasi balance factor di setiap node</li>
+                        <li>Rotasi dapat mahal secara komputasional selama operasi update</li>
+                        <li>Lebih kompleks diimplementasikan dibanding BST biasa</li>
+                    </ul>
+
+                    <h3>🗂️ Fitur Aplikasi Ini</h3>
+                    <ul>
+                        <li><strong>Dashboard:</strong> Melihat statistik pohon dan representasi ASCII</li>
+                        <li><strong>Input Data:</strong> Menambah data tunggal atau massal</li>
+                        <li><strong>Search:</strong> Mencari data berdasarkan ID atau nama</li>
+                        <li><strong>Delete:</strong> Menghapus data dan rebalance otomatis</li>
+                        <li><strong>Traversal:</strong> Inorder, Preorder, Postorder</li>
+                        <li><strong>Visualisasi:</strong> Tampilan grafis dengan zoom control</li>
+                    </ul>
+
+                    <h3>🔗 Format Input Data</h3>
+                    <p>Data harus berformat <code>ID,Nama</code> atau dipisahkan dengan tab/semicolon:</p>
+                    <ul>
+                        <li>50,Ahmad</li>
+                        <li>30,Budi (tab) 70,Citra</li>
+                        <li>20;Dewi;40;Endah</li>
+                    </ul>
+
+                    <div class="divider"></div>
+                    <p style="text-align: center; color: #7f8c8d; font-size: 0.9em;">
+                        Dibuat untuk Pembelajaran Struktur Data - Pohon Seimbang (AVL Tree)<br>
+                        <strong>Semester 4 - Universitas</strong>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ======================== FOOTER ======================== -->
+        <div class="footer">
+            <p>🌳 AVL Tree Visualizer v1.0 | Struktur Data Semester 4 | © 2026 - Optimasi Performa dengan Balance Tree</p>
+        </div>
+    </div>
+
+    <!-- Load D3.js for Tree Visualization -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    
+    <!-- Load Application JavaScript -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+    <!-- Initialize and Load Sample Data on first load -->
+    <script>
+        // Auto-load dashboard on page load
+        window.addEventListener('load', function() {
+            refreshDashboard();
+        });
+
+        // Sample data loader
+        function loadSampleData() {
+            const sampleInput = `50,Ahmad
+30,Budi
+70,Citra
+20,Dewi
+40,Endah
+60,Farah
+80,Galih
+10,Hana
+25,Ika
+35,Joko
+55,Kara
+65,Lina
+75,Malik
+85,Nila`;
+            
+            document.getElementById('bulk-input').value = sampleInput;
+            insertBulkData();
+        }
+
+        // Reset tree function
+        async function resetTree() {
+            try {
+                const response = await fetch('/api/tree/clear', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showSuccess('Pohon berhasil direset!');
+                    refreshDashboard();
+                    document.getElementById('tree-visualization').innerHTML = 
+                        '<div class="tree-empty-message">📭 Pohon kosong<br><small>Tambahkan data terlebih dahulu</small></div>';
+                } else {
+                    showError('Gagal mereset pohon');
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+
+        // Delete by ID wrapper
+        async function deleteDataById() {
+            const deleteId = document.getElementById('delete-id').value.trim();
+            if (!deleteId) {
+                showError('Masukkan ID terlebih dahulu');
+                return;
+            }
+            await deleteData(parseInt(deleteId));
+            document.getElementById('delete-id').value = '';
+        }
+
+        // Delete by Name wrapper
+        async function deleteDataByName() {
+            const deleteName = document.getElementById('delete-name').value.trim();
+            if (!deleteName) {
+                showError('Masukkan nama terlebih dahulu');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/delete-by-name`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nama: deleteName })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess(data.message || 'Data berhasil dihapus');
+                    refreshDashboard();
+                    document.getElementById('delete-name').value = '';
+                } else {
+                    showError(data.message || 'Gagal menghapus data');
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

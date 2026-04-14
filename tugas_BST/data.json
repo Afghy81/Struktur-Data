@@ -1,0 +1,407 @@
+{
+  "nodes": [
+    {
+      "id": 1070,
+      "nama": "mouse"
+    },
+    {
+      "id": 1138,
+      "nama": "kaca"
+    },
+    {
+      "id": 1302,
+      "nama": "pisang"
+    },
+    {
+      "id": 1305,
+      "nama": "sikat"
+    },
+    {
+      "id": 1660,
+      "nama": "dispenser"
+    },
+    {
+      "id": 1928,
+      "nama": "celana"
+    },
+    {
+      "id": 2156,
+      "nama": "penggaris"
+    },
+    {
+      "id": 2363,
+      "nama": "pepaya"
+    },
+    {
+      "id": 2398,
+      "nama": "kereta"
+    },
+    {
+      "id": 2618,
+      "nama": "stabilo"
+    },
+    {
+      "id": 2751,
+      "nama": "pintu"
+    },
+    {
+      "id": 2897,
+      "nama": "antena"
+    },
+    {
+      "id": 3195,
+      "nama": "cabai"
+    },
+    {
+      "id": 3248,
+      "nama": "meja"
+    },
+    {
+      "id": 3258,
+      "nama": "kompor"
+    },
+    {
+      "id": 3316,
+      "nama": "karpet"
+    },
+    {
+      "id": 3409,
+      "nama": "topi"
+    },
+    {
+      "id": 3482,
+      "nama": "selang"
+    },
+    {
+      "id": 3525,
+      "nama": "sapu"
+    },
+    {
+      "id": 3561,
+      "nama": "gelas"
+    },
+    {
+      "id": 3685,
+      "nama": "jam"
+    },
+    {
+      "id": 3725,
+      "nama": "pesawat"
+    },
+    {
+      "id": 3818,
+      "nama": "bantal"
+    },
+    {
+      "id": 3874,
+      "nama": "becak"
+    },
+    {
+      "id": 4159,
+      "nama": "angklung"
+    },
+    {
+      "id": 4207,
+      "nama": "mukena"
+    },
+    {
+      "id": 4304,
+      "nama": "cobek"
+    },
+    {
+      "id": 4361,
+      "nama": "korek api"
+    },
+    {
+      "id": 4379,
+      "nama": "kopi"
+    },
+    {
+      "id": 4457,
+      "nama": "kertas"
+    },
+    {
+      "id": 4490,
+      "nama": "televisi"
+    },
+    {
+      "id": 4492,
+      "nama": "gayung"
+    },
+    {
+      "id": 4513,
+      "nama": "kipas"
+    },
+    {
+      "id": 4577,
+      "nama": "gunting"
+    },
+    {
+      "id": 4650,
+      "nama": "tisu"
+    },
+    {
+      "id": 4969,
+      "nama": "suling"
+    },
+    {
+      "id": 5082,
+      "nama": "piring"
+    },
+    {
+      "id": 5083,
+      "nama": "jaket"
+    },
+    {
+      "id": 5097,
+      "nama": "toples"
+    },
+    {
+      "id": 5192,
+      "nama": "tikar"
+    },
+    {
+      "id": 5204,
+      "nama": "baju"
+    },
+    {
+      "id": 5210,
+      "nama": "perahu"
+    },
+    {
+      "id": 5288,
+      "nama": "pensil"
+    },
+    {
+      "id": 5309,
+      "nama": "pigura"
+    },
+    {
+      "id": 5408,
+      "nama": "keyboard"
+    },
+    {
+      "id": 5641,
+      "nama": "kursi"
+    },
+    {
+      "id": 5656,
+      "nama": "charger"
+    },
+    {
+      "id": 5741,
+      "nama": "wortel"
+    },
+    {
+      "id": 5914,
+      "nama": "sepeda"
+    },
+    {
+      "id": 5993,
+      "nama": "pulpen"
+    },
+    {
+      "id": 6119,
+      "nama": "kaos"
+    },
+    {
+      "id": 6244,
+      "nama": "pisau"
+    },
+    {
+      "id": 6271,
+      "nama": "parfum"
+    },
+    {
+      "id": 6362,
+      "nama": "piama"
+    },
+    {
+      "id": 6402,
+      "nama": "lemari"
+    },
+    {
+      "id": 6453,
+      "nama": "peci"
+    },
+    {
+      "id": 6465,
+      "nama": "piano"
+    },
+    {
+      "id": 6602,
+      "nama": "shampo"
+    },
+    {
+      "id": 6799,
+      "nama": "tas"
+    },
+    {
+      "id": 6820,
+      "nama": "termos"
+    },
+    {
+      "id": 6852,
+      "nama": "timun"
+    },
+    {
+      "id": 6861,
+      "nama": "bawang"
+    },
+    {
+      "id": 6928,
+      "nama": "gula"
+    },
+    {
+      "id": 7151,
+      "nama": "panci"
+    },
+    {
+      "id": 7187,
+      "nama": "sabun"
+    },
+    {
+      "id": 7255,
+      "nama": "jilbab"
+    },
+    {
+      "id": 7363,
+      "nama": "kapal"
+    },
+    {
+      "id": 7376,
+      "nama": "kemoceng"
+    },
+    {
+      "id": 7524,
+      "nama": "wajan"
+    },
+    {
+      "id": 7572,
+      "nama": "keset"
+    },
+    {
+      "id": 7631,
+      "nama": "rakit"
+    },
+    {
+      "id": 7660,
+      "nama": "sepatu"
+    },
+    {
+      "id": 7921,
+      "nama": "kasur"
+    },
+    {
+      "id": 8028,
+      "nama": "kulkas"
+    },
+    {
+      "id": 8043,
+      "nama": "buku"
+    },
+    {
+      "id": 8147,
+      "nama": "apel"
+    },
+    {
+      "id": 8153,
+      "nama": "botol"
+    },
+    {
+      "id": 8194,
+      "nama": "sajadah"
+    },
+    {
+      "id": 8258,
+      "nama": "tablet"
+    },
+    {
+      "id": 8294,
+      "nama": "laptop"
+    },
+    {
+      "id": 8563,
+      "nama": "komputer"
+    },
+    {
+      "id": 8612,
+      "nama": "kaleng"
+    },
+    {
+      "id": 8689,
+      "nama": "penghapus"
+    },
+    {
+      "id": 8699,
+      "nama": "sampul"
+    },
+    {
+      "id": 8783,
+      "nama": "sarung"
+    },
+    {
+      "id": 8902,
+      "nama": "jeruk"
+    },
+    {
+      "id": 8938,
+      "nama": "cat"
+    },
+    {
+      "id": 8967,
+      "nama": "tomat"
+    },
+    {
+      "id": 9033,
+      "nama": "mobil"
+    },
+    {
+      "id": 9151,
+      "nama": "kran"
+    },
+    {
+      "id": 9178,
+      "nama": "blender"
+    },
+    {
+      "id": 9224,
+      "nama": "kaos kaki"
+    },
+    {
+      "id": 9250,
+      "nama": "sisir"
+    },
+    {
+      "id": 9298,
+      "nama": "ikat pinggang"
+    },
+    {
+      "id": 9309,
+      "nama": "jendela"
+    },
+    {
+      "id": 9781,
+      "nama": "ranjang"
+    },
+    {
+      "id": 9783,
+      "nama": "smartphone"
+    },
+    {
+      "id": 9817,
+      "nama": "galon"
+    },
+    {
+      "id": 9888,
+      "nama": "gitar"
+    },
+    {
+      "id": 9971,
+      "nama": "motor"
+    }
+  ],
+  "last_updated": "2026-04-14T16:46:09.127686",
+  "version": "1.0",
+  "total_records": 100
+}
