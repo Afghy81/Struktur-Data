@@ -3,9 +3,11 @@ import math
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
                              QHBoxLayout, QPushButton, QLabel, QLineEdit, 
                              QComboBox, QMessageBox, QTextEdit)
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QColor
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QFont, QColor, QPen, QBrush
 import pyqtgraph as pg
+from pyqtgraph import PlotWidget
+import numpy as np
 import networkx as nx
 
 class GraphApp(QMainWindow):
@@ -18,13 +20,13 @@ class GraphApp(QMainWindow):
         
     def init_ui(self):
         self.setWindowTitle('Visualisasi Undirected Graph - PyQTGraph')
-        self.setGeometry(100, 100, 1400, 900)
+        self.setGeometry(100, 100, 1500, 900)
         
         # Central widget
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         
-        # Main layout (Horizontal - Menu left, Output right)
+        # Main layout (Horizontal - Menu left, Content right)
         main_layout = QHBoxLayout()
         
         # LEFT PANEL - Control menu
@@ -116,16 +118,38 @@ class GraphApp(QMainWindow):
         
         control_layout.addStretch()
         
-        # RIGHT PANEL - Output text (full width output)
-        output_layout = QVBoxLayout()
+        # RIGHT PANEL - Graph visualization (top) + Output text (bottom)
+        right_layout = QVBoxLayout()
+
+        # --- Graph Visualization Panel ---
+        graph_panel_label = QLabel("Visualisasi Graf (Adjacency Matrix):")
+        graph_panel_label.setStyleSheet("font-weight: bold; font-size: 12px;")
+        right_layout.addWidget(graph_panel_label)
+
+        # pyqtgraph PlotWidget as the graph canvas
+        pg.setConfigOptions(antialias=True)
+        self.graph_plot = pg.PlotWidget()
+        self.graph_plot.setBackground('#1e1e2e')
+        self.graph_plot.setAspectLocked(True)
+        self.graph_plot.hideAxis('bottom')
+        self.graph_plot.hideAxis('left')
+        self.graph_plot.setMinimumHeight(350)
+        self.graph_plot.setMaximumHeight(420)
+        self.graph_plot.getViewBox().setMouseEnabled(x=True, y=True)
+        right_layout.addWidget(self.graph_plot)
+
+        # --- Output Text Panel ---
         output_label = QLabel("Output:")
         output_label.setStyleSheet("font-weight: bold; font-size: 12px;")
-        output_layout.addWidget(output_label)
+        right_layout.addWidget(output_label)
         
         self.output_text = QTextEdit()
         self.output_text.setReadOnly(True)
-        self.output_text.setStyleSheet("background-color: white; color: black; font-family: Courier; font-size: 10px;")
-        output_layout.addWidget(self.output_text)
+        self.output_text.setStyleSheet(
+            "background-color: #1e1e2e; color: #cdd6f4; "
+            "font-family: Courier; font-size: 10px; border: 1px solid #45475a;"
+        )
+        right_layout.addWidget(self.output_text)
         
         # Create widgets for left and right panels
         left_widget = QWidget()
@@ -133,13 +157,16 @@ class GraphApp(QMainWindow):
         left_widget.setMaximumWidth(300)
         
         right_widget = QWidget()
-        right_widget.setLayout(output_layout)
+        right_widget.setLayout(right_layout)
         
         # Add to main layout with proportions
         main_layout.addWidget(left_widget, 1)
-        main_layout.addWidget(right_widget, 2)
+        main_layout.addWidget(right_widget, 3)
         
         central_widget.setLayout(main_layout)
+        
+        # Track node/edge visual items for redraw
+        self._graph_items = []
         
     def update_vertex_combos(self):
         """Update all comboboxes with current vertices"""
@@ -193,6 +220,7 @@ class GraphApp(QMainWindow):
         self.vertex_input.clear()
         self.output_text.append(f"[OK] Vertex '{label}' berhasil ditambahkan!")
         self.update_vertex_combos()
+        self.draw_graph_panel()
         
     def delete_vertex(self):
         if len(self.graph.nodes()) == 0:
@@ -210,6 +238,7 @@ class GraphApp(QMainWindow):
         
         self.output_text.append(f"[OK] Vertex '{label}' berhasil dihapus!")
         self.update_vertex_combos()
+        self.draw_graph_panel()
         
     def add_edge(self):
         if len(self.graph.nodes()) < 2:
@@ -233,6 +262,7 @@ class GraphApp(QMainWindow):
         
         self.graph.add_edge(from_vertex, to_vertex)
         self.output_text.append(f"[OK] Edge antara '{from_vertex}' dan '{to_vertex}' berhasil ditambahkan!")
+        self.draw_graph_panel()
         
     def delete_edge(self):
         if len(self.graph.edges()) == 0:
@@ -252,6 +282,7 @@ class GraphApp(QMainWindow):
         
         self.graph.remove_edge(from_vertex, to_vertex)
         self.output_text.append(f"[OK] Edge antara '{from_vertex}' dan '{to_vertex}' berhasil dihapus!")
+        self.draw_graph_panel()
     
     def display_graph(self):
         if len(self.graph.nodes()) == 0:
@@ -293,6 +324,7 @@ class GraphApp(QMainWindow):
         self.output_text.append(f"\n=== DFS Traversal dari '{start}' ===")
         self.output_text.append(self.get_graph_text())
         self.output_text.append(f"Urutan: {traversal_result}")
+        self._dfs_last = True
         self.highlight_traversal(result)
         
     def traversal_bfs(self):
@@ -329,12 +361,151 @@ class GraphApp(QMainWindow):
         self.output_text.append(f"\n=== BFS Traversal dari '{start}' ===")
         self.output_text.append(self.get_graph_text())
         self.output_text.append(f"Urutan: {traversal_result}")
+        self._dfs_last = False
         self.highlight_traversal(result)
         
     def highlight_traversal(self, traversal_order):
-        """Highlight nodes dalam urutan traversal"""
-        # Ini bisa di-enhance dengan animasi jika diinginkan
-        pass
+        """Highlight nodes dalam urutan traversal dengan animasi step-by-step"""
+        # Redraw dengan semua node abu-abu dulu
+        self.draw_graph_panel(highlight_nodes=[], traversal_order=traversal_order)
+        
+        # Animasi step-by-step: highlight tiap node satu per satu
+        self._traversal_step = 0
+        self._traversal_order = traversal_order
+        self._traversal_timer = QTimer()
+        self._traversal_timer.timeout.connect(self._step_traversal_highlight)
+        self._traversal_timer.start(500)  # 500ms per step
+
+    def _step_traversal_highlight(self):
+        """Timer callback untuk animasi traversal step-by-step"""
+        if self._traversal_step >= len(self._traversal_order):
+            self._traversal_timer.stop()
+            return
+        highlighted = self._traversal_order[:self._traversal_step + 1]
+        self.draw_graph_panel(highlight_nodes=highlighted, traversal_order=self._traversal_order)
+        self._traversal_step += 1
+
+    def draw_graph_panel(self, highlight_nodes=None, traversal_order=None):
+        """Gambar ulang graf pada pyqtgraph PlotWidget berdasarkan adjacency matrix saat ini."""
+        self.graph_plot.clear()
+
+        nodes = list(self.graph.nodes())
+        if not nodes:
+            # Tampilkan teks kosong
+            text = pg.TextItem(text='Graph kosong.\nTambahkan vertex terlebih dahulu.',
+                               color=(160, 160, 160), anchor=(0.5, 0.5))
+            self.graph_plot.addItem(text)
+            text.setPos(0, 0)
+            return
+
+        # Hitung posisi node melingkar (circular layout)
+        n = len(nodes)
+        radius = 1.0 if n > 1 else 0.0
+        angles = [2 * math.pi * i / n - math.pi / 2 for i in range(n)]
+        node_pos = {}
+        for i, node in enumerate(nodes):
+            x = radius * math.cos(angles[i])
+            y = radius * math.sin(angles[i])
+            node_pos[node] = (x, y)
+
+        # Warna
+        COLOR_BG        = (30, 30, 46)      # background
+        COLOR_EDGE_DEF  = (100, 150, 255)   # edge default (biru terang)
+        COLOR_EDGE_HL   = (255, 200, 60)    # edge highlight traversal (kuning)
+        COLOR_NODE_DEF  = (69, 133, 255)    # node default
+        COLOR_NODE_HL   = (250, 179, 135)   # node highlight (oranye)
+        COLOR_NODE_START= (166, 227, 161)   # start node (hijau)
+        COLOR_TEXT      = (205, 214, 244)   # label text
+        COLOR_TEXT_HL   = (30, 30, 46)      # label text saat highlight
+
+        highlight_set = set(highlight_nodes) if highlight_nodes else set()
+        traversal_set = set(traversal_order) if traversal_order else set()
+
+        # Set traversal edges (edge yang dilalui traversal)
+        traversal_edges = set()
+        if traversal_order and len(traversal_order) > 1:
+            for i in range(len(traversal_order) - 1):
+                a, b = traversal_order[i], traversal_order[i + 1]
+                if self.graph.has_edge(a, b):
+                    traversal_edges.add((a, b))
+                    traversal_edges.add((b, a))
+
+        # Gambar edges
+        for u, v in self.graph.edges():
+            x1, y1 = node_pos[u]
+            x2, y2 = node_pos[v]
+            is_traversal_edge = (u, v) in traversal_edges
+            # Cek apakah kedua ujung edge sudah di-highlight
+            both_highlighted = (u in highlight_set and v in highlight_set)
+            if both_highlighted and is_traversal_edge:
+                pen = pg.mkPen(color=COLOR_EDGE_HL, width=3)
+            elif traversal_order and not (u in traversal_set and v in traversal_set):
+                pen = pg.mkPen(color=(70, 70, 90), width=1.5, style=Qt.DashLine)
+            else:
+                pen = pg.mkPen(color=COLOR_EDGE_DEF, width=2)
+            edge_item = self.graph_plot.plot([x1, x2], [y1, y2], pen=pen)
+
+        # Gambar nodes
+        node_size = max(18, 32 - n)
+        for node in nodes:
+            x, y = node_pos[node]
+            is_start  = (traversal_order and node == traversal_order[0])
+            is_hl     = node in highlight_set
+            is_trail  = (traversal_order is not None) and (node in traversal_set) and not is_hl
+
+            if is_hl and is_start:
+                brush_color = COLOR_NODE_START
+                pen_color   = (100, 200, 100)
+            elif is_hl:
+                brush_color = COLOR_NODE_HL
+                pen_color   = (220, 140, 80)
+            elif is_trail:
+                brush_color = (60, 60, 80)
+                pen_color   = (100, 100, 130)
+            else:
+                brush_color = COLOR_NODE_DEF
+                pen_color   = (50, 80, 180)
+
+            scatter = pg.ScatterPlotItem(
+                [x], [y],
+                size=node_size,
+                pen=pg.mkPen(pen_color, width=2),
+                brush=pg.mkBrush(*brush_color)
+            )
+            self.graph_plot.addItem(scatter)
+
+            # Label node
+            txt_color = COLOR_TEXT_HL if (is_hl or is_start) else COLOR_TEXT
+            label = pg.TextItem(
+                text=str(node),
+                color=txt_color,
+                anchor=(0.5, 0.5)
+            )
+            font = QFont('Arial', 9, QFont.Bold)
+            label.setFont(font)
+            label.setPos(x, y)
+            self.graph_plot.addItem(label)
+
+        # Judul panel
+        title_text = 'Graf Adjacency Matrix'
+        if traversal_order:
+            algo = 'DFS' if hasattr(self, '_dfs_last') and self._dfs_last else 'BFS'
+            title_text = f'Traversal {algo}: ' + ' → '.join(traversal_order[:len(highlight_nodes or [])+1])
+        title_item = pg.TextItem(
+            text=title_text,
+            color=(166, 227, 161),
+            anchor=(0.5, 1.0)
+        )
+        title_font = QFont('Arial', 10, QFont.Bold)
+        title_item.setFont(title_font)
+        # Posisikan judul di atas semua node
+        title_item.setPos(0, radius + 0.22)
+        self.graph_plot.addItem(title_item)
+
+        # Auto-range
+        padding = radius + 0.35
+        self.graph_plot.setXRange(-padding, padding)
+        self.graph_plot.setYRange(-padding, padding)
     
     def get_graph_text(self):
         return self.format_adjacency_matrix() + "\n\n" + self.format_ascii_graph()
