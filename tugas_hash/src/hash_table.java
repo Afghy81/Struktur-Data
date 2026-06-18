@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class hash_table {
-    private static final int DEFAULT_BUCKET_COUNT = 101;
+    private static final int DEFAULT_BUCKET_COUNT = 100;
 
     private static final int[] INITIAL_KEYS = {
         42, 517, 893, 126, 754, 311, 968, 205, 679, 34,

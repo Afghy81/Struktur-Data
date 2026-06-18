@@ -74,6 +74,7 @@ public class App {
         }
 
         originalMatrix = new Matrix(rows, cols);
+        matrix = null; // Reset matrix saat matrix baru dibuat
 
         System.out.println("\nMasukkan elemen matrix (baris per baris):");
         int[][] data = originalMatrix.getData();
@@ -101,6 +102,11 @@ public class App {
     }
 
     static void operationMenu() {
+        // Inisialisasi matrix dari originalMatrix saat pertama kali masuk menu operasi
+        if (matrix == null) {
+            matrix = copyMatrix(originalMatrix);
+        }
+
         while (true) {
             System.out.println("╔══════════════════════════════════════╗");
             System.out.println("║         MENU OPERASI MATRIX          ║");
@@ -110,9 +116,10 @@ public class App {
             System.out.println("║ 3. Traversal Matrix                  ║");
             System.out.println("║ 4. Print Matrix Spiral Form          ║");
             System.out.println("║ 5. Transpose Matrix                  ║");
-            System.out.println("║ 6. Kembali ke Menu Utama             ║");
+            System.out.println("║ 6. Reset ke Matrix Asli              ║");
+            System.out.println("║ 7. Kembali ke Menu Utama             ║");
             System.out.println("╚══════════════════════════════════════╝");
-            System.out.print("Pilih opsi (1-6): ");
+            System.out.print("Pilih opsi (1-7): ");
 
             String choice = scanner.nextLine().trim();
 
@@ -127,20 +134,22 @@ public class App {
                     traversalMenu();
                     break;
                 case "4":
-                    matrix = copyMatrix(originalMatrix);
-                    originalMatrix.print();
+                    matrix.print();
                     System.out.println("╔════════════════════════════════════════╗");
                     System.out.println("║ Spiral Form Result:                    ║");
                     System.out.println("╚════════════════════════════════════════╝");
                     matrix.spiralTraversal();
                     break;
                 case "5":
-                    matrix = copyMatrix(originalMatrix);
                     matrix.printBefore("Transpose");
                     matrix.transpose();
                     matrix.printAfter("Transpose");
                     break;
                 case "6":
+                    matrix = copyMatrix(originalMatrix);
+                    System.out.println("✓ Matrix direset ke nilai asli!\n");
+                    break;
+                case "7":
                     return;
                 default:
                     System.out.println("✗ Opsi tidak valid!\n");
@@ -162,13 +171,11 @@ public class App {
 
         switch (choice) {
             case "a":
-                matrix = copyMatrix(originalMatrix);
                 matrix.printBefore("Sort Row-wise");
                 matrix.sortRowWise();
                 matrix.printAfter("Sort Row-wise");
                 break;
             case "b":
-                matrix = copyMatrix(originalMatrix);
                 matrix.printBefore("Sort Column-wise");
                 matrix.sortColumnWise();
                 matrix.printAfter("Sort Column-wise");
@@ -196,25 +203,21 @@ public class App {
 
         switch (choice) {
             case "a":
-                matrix = copyMatrix(originalMatrix);
                 matrix.printBefore("Rotate Clockwise by 1");
                 matrix.rotateClockwiseBy1();
                 matrix.printAfter("Rotate Clockwise by 1");
                 break;
             case "b":
-                matrix = copyMatrix(originalMatrix);
                 matrix.printBefore("Rotate Counter-Clockwise by 1");
                 matrix.rotateCounterClockwiseBy1();
                 matrix.printAfter("Rotate Counter-Clockwise by 1");
                 break;
             case "c":
-                matrix = copyMatrix(originalMatrix);
                 matrix.printBefore("Rotate by 90 Degrees");
                 matrix.rotateBy90();
                 matrix.printAfter("Rotate by 90 Degrees");
                 break;
             case "d":
-                matrix = copyMatrix(originalMatrix);
                 matrix.printBefore("Rotate by 180 Degrees");
                 matrix.rotateBy180();
                 matrix.printAfter("Rotate by 180 Degrees");
@@ -240,16 +243,14 @@ public class App {
 
         switch (choice) {
             case "a":
-                matrix = copyMatrix(originalMatrix);
-                originalMatrix.print();
+                matrix.print();
                 System.out.println("╔════════════════════════════════════════╗");
                 System.out.println("║ Row-wise Traversal Result:             ║");
                 System.out.println("╚════════════════════════════════════════╝");
                 matrix.rowWiseTraversal();
                 break;
             case "b":
-                matrix = copyMatrix(originalMatrix);
-                originalMatrix.print();
+                matrix.print();
                 System.out.println("╔════════════════════════════════════════╗");
                 System.out.println("║ Column-wise Traversal Result:          ║");
                 System.out.println("╚════════════════════════════════════════╝");
